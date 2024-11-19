@@ -13,7 +13,7 @@ namespace Syrx.Commanders.Databases
         {
             var setting = _reader.GetCommand(_type, method);
             var command = GetCommandDefinition(setting, parameters, cancellationToken: cancellationToken);
-            var connection = _connector.CreateConnection(setting);
+            using (var connection = _connector.CreateConnection(setting))
             {
                 var reader = await connection.QueryMultipleAsync(command);
                 var t1 = await reader.ReadAsync<T1>();
