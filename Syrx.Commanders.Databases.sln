@@ -1,11 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35506.116 d17.12
+VisualStudioVersion = 17.12.35506.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".docs", ".docs", "{25A253C7-37C1-4665-8456-20D8AD1C90EB}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		readme.md = readme.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".config", ".config", "{62B696A9-D903-4211-AE85-C1198FF372E4}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6E60B3D9-C527-4DCF-BE85-9DD1AD502643}"
 EndProject
@@ -56,6 +66,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syrx.Commanders.Databases.Settings.Tests.Unit", "tests\unit\Syrx.Commanders.Databases.Settings.Tests.Unit\Syrx.Commanders.Databases.Settings.Tests.Unit.csproj", "{024675DD-4FC1-41D2-AD34-C83D3E767A17}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syrx.Commanders.Databases.Tests.Extensions", "tests\unit\Syrx.Commanders.Databases.Tests.Extensions\Syrx.Commanders.Databases.Tests.Extensions.csproj", "{512E9A90-AD79-4497-9526-BF1076A11DCF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syrx.Commanders.Databases.Tests.Unit", "tests\unit\Syrx.Commanders.Databases.Tests.Unit\Syrx.Commanders.Databases.Tests.Unit.csproj", "{71185BE7-919D-4E24-AC2F-86B95B6457CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -151,6 +163,10 @@ Global
 		{512E9A90-AD79-4497-9526-BF1076A11DCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{512E9A90-AD79-4497-9526-BF1076A11DCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{512E9A90-AD79-4497-9526-BF1076A11DCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71185BE7-919D-4E24-AC2F-86B95B6457CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71185BE7-919D-4E24-AC2F-86B95B6457CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71185BE7-919D-4E24-AC2F-86B95B6457CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71185BE7-919D-4E24-AC2F-86B95B6457CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -179,5 +195,6 @@ Global
 		{A8831FD6-8F9D-48F0-8BCE-9E218B68D115} = {5B0FA313-655F-466D-8376-E126871A30E2}
 		{024675DD-4FC1-41D2-AD34-C83D3E767A17} = {5B0FA313-655F-466D-8376-E126871A30E2}
 		{512E9A90-AD79-4497-9526-BF1076A11DCF} = {5B0FA313-655F-466D-8376-E126871A30E2}
+		{71185BE7-919D-4E24-AC2F-86B95B6457CD} = {5B0FA313-655F-466D-8376-E126871A30E2}
 	EndGlobalSection
 EndGlobal

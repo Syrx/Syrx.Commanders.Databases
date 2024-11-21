@@ -33,6 +33,8 @@ namespace Syrx.Commanders.Databases
 
         public bool Execute<TResult>(TResult model, [CallerMemberName] string method = null)
         {
+            Throw<ArgumentNullException>(model != null, nameof(model));
+
             var setting = _reader.GetCommand(_type, method);
             using (var connection = _connector.CreateConnection(setting))
             {
@@ -41,7 +43,7 @@ namespace Syrx.Commanders.Databases
                 {
                     try
                     {
-                        var command = GetCommandDefinition(setting, model, transaction);
+                        var command = GetCommandDefinition(setting, model!, transaction);
                         var result = (connection.Execute(command) > 0);
                         transaction.Commit();
                         return result;
