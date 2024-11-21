@@ -5,8 +5,8 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="Syrx.Validation" Version="2.0.0" />
-		<PackageReference Include="Syrx.Settings" Version="2.1.0" />
+		<PackageReference Include="Syrx.Validation" Version="2.*" />
+		<PackageReference Include="Syrx.Settings" Version="2.*" />
 	</ItemGroup>
 
 </Project>
