@@ -38,7 +38,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Dapper" Version="2.1.35" />
-		<PackageReference Include="Syrx" Version="2.1.0" />
+		<PackageReference Include="Syrx" Version="2.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>
