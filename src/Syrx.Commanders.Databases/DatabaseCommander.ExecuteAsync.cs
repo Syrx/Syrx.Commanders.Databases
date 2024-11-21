@@ -36,6 +36,8 @@ namespace Syrx.Commanders.Databases
         public async Task<bool> ExecuteAsync<TResult>(TResult model,
             CancellationToken cancellationToken = default, [CallerMemberName] string method = null)
         {
+            Throw<ArgumentNullException>(model != null, nameof(model));
+
             var setting = _reader.GetCommand(_type, method);
             using (var connection = _connector.CreateConnection(setting))
             {
@@ -44,7 +46,7 @@ namespace Syrx.Commanders.Databases
                 {
                     try
                     {
-                        var command = GetCommandDefinition(setting, model, transaction, cancellationToken);
+                        var command = GetCommandDefinition(setting, model!, transaction, cancellationToken);
                         var result = (await connection.ExecuteAsync(command) > 0);
                         transaction.Commit();
                         return result;
