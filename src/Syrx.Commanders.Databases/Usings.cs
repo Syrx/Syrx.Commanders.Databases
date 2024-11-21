@@ -6,3 +6,4 @@ global using System.ComponentModel;
 global using System.Data;
 global using System.Runtime.CompilerServices;
 global using System.Transactions;
+global using static Syrx.Validation.Contract;
