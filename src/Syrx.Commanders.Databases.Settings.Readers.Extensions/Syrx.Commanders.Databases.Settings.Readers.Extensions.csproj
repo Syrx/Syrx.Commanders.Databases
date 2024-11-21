@@ -33,7 +33,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
-		<PackageReference Include="Syrx.Extensions" Version="2.1.0" />
+		<PackageReference Include="Syrx.Extensions" Version="2.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>
