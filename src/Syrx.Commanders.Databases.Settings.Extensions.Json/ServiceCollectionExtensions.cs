@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using static Syrx.Validation.Contract;
 
 namespace Syrx.Commanders.Databases.Settings.Extensions.Json
 {
     public static class ServiceCollectionExtensions
     {
+        //[Obsolete("This method is deprecated and will be removed in the 3.0.0 version.", true)]
         public static IServiceCollection AddSyrxJsonFile(
             this IServiceCollection services,
             IConfigurationBuilder builder,
@@ -18,5 +18,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Json
             builder?.AddJsonFile(fileName);
             return services;
         }
+
+        
     }
 }

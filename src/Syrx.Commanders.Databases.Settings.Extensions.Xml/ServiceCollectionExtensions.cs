@@ -6,6 +6,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Xml
 {
     public static class ServiceCollectionExtensions
     {
+        //[Obsolete("This method is deprecated and will be removed in the 3.0.0 version.", false)]
         public static IServiceCollection AddSyrxXmlFile(
             this IServiceCollection services,
             IConfigurationBuilder builder,

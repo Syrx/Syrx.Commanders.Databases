@@ -19,7 +19,6 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Json.Tests.Unit.ServiceC
             // act
             services.AddSyrxJsonFile(builder, filename);
             
-
             // finalze build
             var configuration = builder.Build();
             var provider = services.BuildServiceProvider();
@@ -35,7 +34,9 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Json.Tests.Unit.ServiceC
             Single(resolved.Namespaces.Single().Types);
             Equal(settings.Namespaces.Single().Types.Single().Name, resolved.Namespaces.Single().Types.Single().Name);
             Equal(2, resolved.Namespaces.Single().Types.Single().Commands.Count);
+
+            Equivalent(settings, resolved);
             
-        }
+        }        
     }
 }

@@ -19,9 +19,9 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Json.Tests.Unit
             ConfigurationBuilder = new ConfigurationBuilder();
         }
 
-        public string WriteToFile(CommanderSettings options)
+        public string WriteToFile(CommanderSettings options, string path = null)
         {
-            var path = FileName;
+            path = path ?? FileName;
             File.WriteAllText(path, options.Serialize());
             return path;
         }
