@@ -33,7 +33,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Xml.Tests.Unit.ServiceCo
 
             // assertions
             NotNull(resolved);
-            //Equivalent(settings, resolved);
+            Equivalent(settings, resolved);
 
             Equal(settings.Connections, resolved.Connections);
             Single(resolved.Namespaces);
@@ -49,8 +49,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Xml.Tests.Unit.ServiceCo
             var services = fixture.Services;
             var builder = fixture.ConfigurationBuilder;
             const string path = "syrx.settings.xml";
-            services.AddSyrxXmlFile(builder, path); 
-
+            services.AddSyrxXmlFile(builder, path);
 
             // finalze build
             var configuration = builder.Build();

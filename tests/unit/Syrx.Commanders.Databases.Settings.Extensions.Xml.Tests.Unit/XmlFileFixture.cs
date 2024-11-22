@@ -20,9 +20,9 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Xml.Tests.Unit
             ConfigurationBuilder = new ConfigurationBuilder();
         }
 
-        public string WriteToFile(CommanderSettings options)
+        public string WriteToFile(CommanderSettings options, string path = null)
         {
-            var path = FileName;
+            path = path ?? FileName;
             WriteXml(path, options);
 
             return path;

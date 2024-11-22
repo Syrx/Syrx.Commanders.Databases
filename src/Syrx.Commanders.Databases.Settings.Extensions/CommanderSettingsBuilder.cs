@@ -51,7 +51,7 @@
             return this;
         }
 
-        public void Evaluate(NamespaceSetting option)
+        private void Evaluate(NamespaceSetting option)
         {
             // pretty sure this can be done more elegantly. 
             if (_settings.TryGetValue(option.Namespace, out var ns))

@@ -17,18 +17,28 @@
 		<!-- Treat all warnings as errors -->
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-
-
-
 		<!-- ============================================================================ -->
 		<!-- packaging info -->
 		<!-- ============================================================================ -->
-		<Version>2.2.0</Version>
+		<Version>2.3.0</Version>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<EnablePackageValidation>true</EnablePackageValidation>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageTags>syrx;data access;orm;micro-orm</PackageTags>
-		<PackageReleaseNotes>Updated to .NET8.0.</PackageReleaseNotes>
+		<PackageReleaseNotes>
+			# Minor release
+			## Syrx.Commanders.Databases.Settings.Readers
+			* Removed redundant references.
+
+			## Syrx.Commander.Databases.Settings.Extensions
+			* Marked Evalute method as private.
+
+			## Syrx.Commanders.Databases.Settings.Extensions.Json
+			* Added `UseFile` extension method to provide better syntactic support.
+
+			## Syrx.Commanders.Databases.Settings.Extensions.Xml
+			* Added `UseFile` extension method to provide better syntactic support.
+		</PackageReleaseNotes>
 		
 		<!-- ============================================================================ -->
 		<!-- organization info -->
