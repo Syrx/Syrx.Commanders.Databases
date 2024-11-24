@@ -13,8 +13,7 @@ namespace Syrx.Commanders.Databases
             var setting = _reader.GetCommand(_type, method);
             var command = GetCommandDefinition(setting, parameters, cancellationToken: cancellationToken);
             var connection = _connector.CreateConnection(setting);
-            return await connection.QueryAsync<TResult>(command);
-        }
+            return await connection.QueryAsync<TResult>(command);}
 
         public async Task<IEnumerable<TResult>> QueryAsync<T1, T2, TResult>(Func<T1, T2, TResult> map,
             object parameters = null, CancellationToken cancellationToken = default,
