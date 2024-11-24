@@ -79,6 +79,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\publish.yml = .github\workflows\publish.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "integration", "integration", "{AB00F7B7-A9D3-42C8-AB64-6E8C4F7F9E14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syrx.Commanders.Databases.Tests.Integration.Models", "tests\integration\Syrx.Commanders.Databases.Tests.Integration.Models\Syrx.Commanders.Databases.Tests.Integration.Models.csproj", "{31986FDE-8C13-4C40-955F-3E2169F196C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syrx.Commanders.Databases.Tests.Integration", "tests\integration\Syrx.Commanders.Databases.Tests.Integration\Syrx.Commanders.Databases.Tests.Integration.csproj", "{66F655F9-26B0-43C9-8D61-902AF1B1C2BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -177,6 +183,14 @@ Global
 		{71185BE7-919D-4E24-AC2F-86B95B6457CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71185BE7-919D-4E24-AC2F-86B95B6457CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71185BE7-919D-4E24-AC2F-86B95B6457CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31986FDE-8C13-4C40-955F-3E2169F196C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31986FDE-8C13-4C40-955F-3E2169F196C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31986FDE-8C13-4C40-955F-3E2169F196C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31986FDE-8C13-4C40-955F-3E2169F196C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66F655F9-26B0-43C9-8D61-902AF1B1C2BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66F655F9-26B0-43C9-8D61-902AF1B1C2BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66F655F9-26B0-43C9-8D61-902AF1B1C2BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66F655F9-26B0-43C9-8D61-902AF1B1C2BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -208,5 +222,8 @@ Global
 		{71185BE7-919D-4E24-AC2F-86B95B6457CD} = {5B0FA313-655F-466D-8376-E126871A30E2}
 		{383C4438-FEB7-4797-90D1-8C9DC20FB2A5} = {62B696A9-D903-4211-AE85-C1198FF372E4}
 		{6C8F7C7B-BAEA-4918-A204-1C91BCF0651D} = {383C4438-FEB7-4797-90D1-8C9DC20FB2A5}
+		{AB00F7B7-A9D3-42C8-AB64-6E8C4F7F9E14} = {2569AC18-B196-49C8-B3E1-78ABA8148CDC}
+		{31986FDE-8C13-4C40-955F-3E2169F196C4} = {AB00F7B7-A9D3-42C8-AB64-6E8C4F7F9E14}
+		{66F655F9-26B0-43C9-8D61-902AF1B1C2BE} = {AB00F7B7-A9D3-42C8-AB64-6E8C4F7F9E14}
 	EndGlobalSection
 EndGlobal

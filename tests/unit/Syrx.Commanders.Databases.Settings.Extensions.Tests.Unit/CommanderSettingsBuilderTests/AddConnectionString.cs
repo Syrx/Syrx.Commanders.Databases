@@ -23,19 +23,30 @@
         [Fact]
         public void AddSingle()
         {
-            _ = _builder.AddConnectionString(Alias, ConnectionString);
-            // no exception thrown is the assertion
+            var result = CommanderSettingsBuilderExtensions.Build(a => a
+                .AddConnectionString(Alias, ConnectionString)
+                .AddTestCommand()
+                );
+
+            Single(result.Connections);
+            Equal(Alias, result.Connections.Single().Alias);
+            Equal(ConnectionString, result.Connections.Single().ConnectionString);
         }
 
         [Fact]
         public void DuplicateConnectionStringsReturnsOnlyOne()
         {
-            _ = _builder
+            var result = CommanderSettingsBuilderExtensions.Build(a => a
                 .AddConnectionString(Alias, ConnectionString)
-                .AddConnectionString(Alias, ConnectionString);
-            // no exception thrown is the assertion
+                .AddConnectionString(Alias, ConnectionString)
+                .AddTestCommand()
+                );
+
+            Single(result.Connections);
+            Equal(Alias, result.Connections.Single().Alias);
+            Equal(ConnectionString, result.Connections.Single().ConnectionString);
         }
-
-
     }
+
+    
 }

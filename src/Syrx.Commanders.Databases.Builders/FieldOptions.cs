@@ -6,6 +6,7 @@
         private SqlDbType _type;
         private int? _width;
         private bool _nullable;
+        private bool _identity;
         public FieldOptions WithName(string name)
         {
             Throw<ArgumentNullException>(!string.IsNullOrWhiteSpace(name), nameof(name));
@@ -29,6 +30,12 @@
         public FieldOptions IsNullable(bool nullable = true)
         {
             _nullable = nullable;
+            return this;
+        }
+
+        public FieldOptions IsIdentity(bool identity = false)
+        {
+            _identity = identity;
             return this;
         }
 
