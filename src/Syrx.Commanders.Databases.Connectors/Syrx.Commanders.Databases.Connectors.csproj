@@ -9,10 +9,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="Syrx.Validation" Version="2.0.0" />
-		<PackageReference Include="Syrx.Connectors" Version="2.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\.submodules\Syrx\src\Syrx.Connectors\Syrx.Connectors.csproj" />
 		<ProjectReference Include="..\Syrx.Commanders.Databases.Settings\Syrx.Commanders.Databases.Settings.csproj" />
 	</ItemGroup>
 
