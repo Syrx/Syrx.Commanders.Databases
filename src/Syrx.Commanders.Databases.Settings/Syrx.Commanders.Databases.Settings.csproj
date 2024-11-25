@@ -6,7 +6,10 @@
 	
 	<ItemGroup>
 		<PackageReference Include="Syrx.Validation" Version="2.0.0" />
-		<PackageReference Include="Syrx.Settings" Version="2.2.0" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\..\.submodules\Syrx\src\Syrx.Settings\Syrx.Settings.csproj" />
 	</ItemGroup>
 
 </Project>

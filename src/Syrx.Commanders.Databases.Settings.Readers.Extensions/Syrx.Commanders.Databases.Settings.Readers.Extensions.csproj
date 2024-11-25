@@ -6,10 +6,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
-		<PackageReference Include="Syrx.Extensions" Version="2.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\.submodules\Syrx\src\Syrx.Extensions\Syrx.Extensions.csproj" />
 	  <ProjectReference Include="..\Syrx.Commanders.Databases.Settings.Readers\Syrx.Commanders.Databases.Settings.Readers.csproj" />
 	</ItemGroup>
 

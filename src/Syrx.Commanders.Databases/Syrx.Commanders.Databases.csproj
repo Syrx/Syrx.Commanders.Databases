@@ -6,11 +6,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="Dapper" Version="2.1.35" />
-		<PackageReference Include="Syrx" Version="2.2.0" />
 		<PackageReference Include="Syrx.Validation" Version="2.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\.submodules\Syrx\src\Syrx\Syrx.csproj" />
 		<ProjectReference Include="..\Syrx.Commanders.Databases.Connectors\Syrx.Commanders.Databases.Connectors.csproj" />
 		<ProjectReference Include="..\Syrx.Commanders.Databases.Settings.Readers\Syrx.Commanders.Databases.Settings.Readers.csproj" />
 	</ItemGroup>
