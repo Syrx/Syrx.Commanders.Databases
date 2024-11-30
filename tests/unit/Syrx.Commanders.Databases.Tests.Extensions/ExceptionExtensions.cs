@@ -23,16 +23,5 @@ namespace Syrx.Commanders.Databases.Tests.Extensions
         {
             Equal(message.ReplaceLineEndings(), exception.Message.ReplaceLineEndings());
         }
-
-        public static void DivideByZero(this Exception exception)
-        {
-            const string message = "Divide by zero error encountered.";
-            Equal(message, exception.Message);
-        }
-
-        public static void Print(this Exception excetion)
-        {
-            Console.WriteLine($@"{excetion.Message}");
-        }
     }
 }

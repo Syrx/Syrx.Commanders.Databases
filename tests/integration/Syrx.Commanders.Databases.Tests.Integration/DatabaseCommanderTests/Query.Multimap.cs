@@ -8,8 +8,9 @@
         public virtual void ExceptionsAreReturnedToCaller()
         {
             var result = ThrowsAny<Exception>(() => _commander.Query<int>());
-            const string expected = "Divide by zero error encountered.";
-            Equal(expected, result.Message);
+            var expected = fixture.AssertionMessages.Retrieve<Execute>(nameof(ExceptionsAreReturnedToCaller));
+            result.HasMessage(expected);
+
         }
 
         [Theory(Skip = "Change to the integration test breaks non-parameterized assertion.")]

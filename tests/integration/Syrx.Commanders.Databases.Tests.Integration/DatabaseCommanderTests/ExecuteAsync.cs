@@ -8,7 +8,8 @@
         public virtual async Task ExceptionsAreReturnedToCaller()
         {
             var result = await ThrowsAnyAsync<Exception>(() => _commander.ExecuteAsync(new { value = 1 }));
-            result.DivideByZero();
+            var expected = fixture.AssertionMessages.Retrieve<Execute>(nameof(ExceptionsAreReturnedToCaller));
+            result.HasMessage(expected);
         }
 
         [Fact]
@@ -30,7 +31,8 @@
             var result = await ThrowsAnyAsync<Exception>(() => _commander.ExecuteAsync<bool>());
             var postCount = _commander.Query<int>(method: method);
 
-            result.DivideByZero();
+            var expected = fixture.AssertionMessages.Retrieve<Execute>(nameof(SupportsRollbackOnParameterlessCalls));
+            result.HasMessage(expected);
             Equal(preCount, postCount);
         }
 
