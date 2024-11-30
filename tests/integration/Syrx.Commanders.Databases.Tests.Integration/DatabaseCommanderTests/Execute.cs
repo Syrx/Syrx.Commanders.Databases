@@ -1,5 +1,9 @@
 ﻿namespace Syrx.Commanders.Databases.Tests.Integration.DatabaseCommanderTests
 {
+    // although I *could* use [CallerMemberName] for resolving the method names
+    // for AssertionMessage lookup, I'd rather not have to convert Fact tests to 
+    // Theory tests to accommodate and will continue to use nameof instead. 
+
     public abstract class Execute 
     {
         private readonly ICommander<Execute> _commander;
@@ -15,7 +19,8 @@
         public virtual void ExceptionsAreReturnedToCaller()
         {
             var result = ThrowsAny<Exception>(() => _commander.Execute(new { value = 1 }));
-            result.DivideByZero();
+            var expected = _fixture.AssertionMessages.Retrieve<Execute>(nameof(ExceptionsAreReturnedToCaller));
+            result.HasMessage(expected);
         }
                 
         [Fact]
@@ -37,7 +42,9 @@
             var result = ThrowsAny<Exception>(() => _commander.Execute<bool>());
             var postCount = _commander.Query<int>(method: method);
 
-            result.DivideByZero();
+            var expected = _fixture.AssertionMessages.Retrieve<Execute>(nameof(SupportsRollbackOnParameterlessCalls));
+            result.HasMessage(expected);
+
             Equal(preCount, postCount);
         }
 

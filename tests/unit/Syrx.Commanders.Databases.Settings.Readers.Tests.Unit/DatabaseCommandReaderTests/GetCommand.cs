@@ -94,8 +94,7 @@ namespace Syrx.Commanders.Databases.Settings.Readers.Tests.Unit.DatabaseCommandR
         [Fact]
         public void NoCommandSettingThrowsNullReferenceException()
         {
-            var result = Throws<NullReferenceException>(() => _reader.GetCommand(typeof(NoCommandSettingTest), "DoesNotExist"));
-            result.Print();
+            var result = Throws<NullReferenceException>(() => _reader.GetCommand(typeof(NoCommandSettingTest), "DoesNotExist")); 
             var expect = $"The command setting 'DoesNotExist' has no entry for the type setting '{typeof(NoCommandSettingTest).FullName}'. Please add a command setting entry to the type setting.";
             Equal(expect, result.Message);
         }
