@@ -8,7 +8,7 @@
         public virtual async Task ExceptionsAreReturnedToCaller()
         {
             var result = await ThrowsAnyAsync<Exception>(() => _commander.QueryAsync<int>());
-            var expected = fixture.AssertionMessages.Retrieve<Query>(nameof(ExceptionsAreReturnedToCaller));
+            var expected = fixture.AssertionMessages.Retrieve<QueryAsync>(nameof(ExceptionsAreReturnedToCaller));
             result.HasMessage(expected);
         }
 
