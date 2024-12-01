@@ -8,7 +8,7 @@
         public virtual async Task ExceptionsAreReturnedToCaller()
         {
             var result = await ThrowsAnyAsync<Exception>(() => _commander.ExecuteAsync(new { value = 1 }));
-            var expected = fixture.AssertionMessages.Retrieve<Execute>(nameof(ExceptionsAreReturnedToCaller));
+            var expected = fixture.AssertionMessages.Retrieve<ExecuteAsync>(nameof(ExceptionsAreReturnedToCaller));
             result.HasMessage(expected);
         }
 
@@ -31,7 +31,7 @@
             var result = await ThrowsAnyAsync<Exception>(() => _commander.ExecuteAsync<bool>());
             var postCount = _commander.Query<int>(method: method);
 
-            var expected = fixture.AssertionMessages.Retrieve<Execute>(nameof(SupportsRollbackOnParameterlessCalls));
+            var expected = fixture.AssertionMessages.Retrieve<ExecuteAsync>(nameof(SupportsRollbackOnParameterlessCalls));
             result.HasMessage(expected);
             Equal(preCount, postCount);
         }
@@ -66,8 +66,7 @@
             var model = new ImmutableType(1, Guid.NewGuid().ToString(), int.MaxValue, DateTime.UtcNow);
 
             var result = await ThrowsAnyAsync<Exception>(() => _commander.ExecuteAsync(model));
-            var expected =
-                $"Arithmetic overflow error converting expression to data type float.{Environment.NewLine}The statement has been terminated.";
+            var expected = fixture.AssertionMessages.Retrieve<ExecuteAsync>(nameof(SupportsRollbackOnParameterlessCalls));
             result.HasMessage(expected);
 
             // check if the result has been rolled back.
