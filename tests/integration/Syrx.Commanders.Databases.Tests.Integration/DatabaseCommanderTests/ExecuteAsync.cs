@@ -66,7 +66,7 @@
             var model = new ImmutableType(1, Guid.NewGuid().ToString(), int.MaxValue, DateTime.UtcNow);
 
             var result = await ThrowsAnyAsync<Exception>(() => _commander.ExecuteAsync(model));
-            var expected = fixture.AssertionMessages.Retrieve<ExecuteAsync>(nameof(SupportsRollbackOnParameterlessCalls));
+            var expected = fixture.AssertionMessages.Retrieve<ExecuteAsync>(nameof(SupportsTransactionRollback));
             result.HasMessage(expected);
 
             // check if the result has been rolled back.
