@@ -1,13 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Syrx.Commanders.Databases.Extensions;
-using Syrx.Commanders.Databases.Settings;
-using Syrx.Commanders.Databases.Settings.Extensions;
-using Syrx.Commanders.Databases.Settings.Readers.Extensions;
-using Syrx.Extensions;
-using System.Data.Common;
-using static Syrx.Validation.Contract;
-
-namespace Syrx.Commanders.Databases.Connectors.Extensions
+﻿namespace Syrx.Commanders.Databases.Connectors.Extensions
 {
     public static class DatabaseConnectorExtensions
     {

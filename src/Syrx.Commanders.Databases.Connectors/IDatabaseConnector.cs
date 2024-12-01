@@ -9,9 +9,6 @@ namespace Syrx.Commanders.Databases.Connectors
     /// <summary>
     ///     Used to create database connections against an underlying data store.
     /// </summary>
-    public interface IDatabaseConnector 
-    {
-        IDbConnection CreateConnection(CommandSetting setting);
-    }
+    public interface IDatabaseConnector : IConnector<IDbConnection, CommandSetting> { }
 }
 

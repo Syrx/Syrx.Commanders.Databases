@@ -1,3 +1,2 @@
-﻿global using System.Runtime.Serialization;
-global using System.Data;
-global using static Syrx.Validation.Contract;
+﻿global using System.Data;
+global using Syrx.Settings;

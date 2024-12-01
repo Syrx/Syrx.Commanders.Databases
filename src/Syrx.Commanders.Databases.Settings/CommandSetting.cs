@@ -1,6 +1,6 @@
 ﻿namespace Syrx.Commanders.Databases.Settings
 {
-    public sealed record CommandSetting
+    public sealed record CommandSetting : ICommandSetting
     {
         public string Split { get; init; } = "Id";
         public required string CommandText { get; init; }

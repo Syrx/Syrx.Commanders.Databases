@@ -1,9 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Syrx.Extensions;
-using System.Data.Common;
-using static Syrx.Validation.Contract;
-
-namespace Syrx.Commanders.Databases.Connectors.Extensions
+﻿namespace Syrx.Commanders.Databases.Connectors.Extensions
 {
     public static class ServiceCollectionExtensions
     {
@@ -21,7 +16,7 @@ namespace Syrx.Commanders.Databases.Connectors.Extensions
                 $"The {nameof(DbProviderFactory)} delegate cannot be null."));
 
             return services.TryAddToServiceCollection(
-                typeof(Func<DbProviderFactory>), 
+                typeof(Func<DbProviderFactory>),
                 providerFactory!);
         }
 
@@ -35,6 +30,6 @@ namespace Syrx.Commanders.Databases.Connectors.Extensions
                 typeof(TImplementation),
                 lifetime);
         }
-        
+
     }
 }

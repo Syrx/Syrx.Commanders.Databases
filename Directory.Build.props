@@ -25,21 +25,22 @@
 		<EnablePackageValidation>true</EnablePackageValidation>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageTags>syrx;data access;orm;micro-orm</PackageTags>
+
 		<PackageReleaseNotes>
 			# Minor release
 			## Syrx.Commanders.Databases.Settings.Readers
-			* Removed redundant references.
+			* Returned inheritance to ICommandReader.
 
-			## Syrx.Commander.Databases.Settings.Extensions
-			* Marked Evalute method as private.
+			## Syrx.Commanders.Databases.Connectors
+			* Returned inheritance to IConnector.
 
-			## Syrx.Commanders.Databases.Settings.Extensions.Json
-			* Added `UseFile` extension method to provide better syntactic support.
+			## Other
+			* Update readme.md
+			* Cleaned up some using statements.
+			* Renamed file to match the type name.
 
-			## Syrx.Commanders.Databases.Settings.Extensions.Xml
-			* Added `UseFile` extension method to provide better syntactic support.
 		</PackageReleaseNotes>
-		
+
 		<!-- ============================================================================ -->
 		<!-- organization info -->
 		<!-- ============================================================================ -->
@@ -59,11 +60,4 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
-
-	<!--<ItemGroup>
-    -->
-	<!-- Add common package references -->
-	<!--
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-  </ItemGroup>-->
 </Project>
