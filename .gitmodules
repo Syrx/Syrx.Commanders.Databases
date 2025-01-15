@@ -1,3 +1,4 @@
 [submodule ".submodules/Syrx"]
 	path = .submodules/Syrx
 	url = https://github.com/Syrx/Syrx
+	branch = main
