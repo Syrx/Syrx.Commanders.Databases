@@ -55,7 +55,7 @@ Install-Package Syrx.Commanders.Databases.Settings.Extensions.Xml
 
 **PackageReference**
 ```xml
-<PackageReference Include="Syrx.Commanders.Databases.Settings.Extensions.Xml" Version="2.4.5" />
+<PackageReference Include="Syrx.Commanders.Databases.Settings.Extensions.Xml" Version="3.0.0" />
 ```
 
 > **Note**: The `Syrx.Extensions` package (which provides the `UseSyrx()` method) is automatically included as a dependency.

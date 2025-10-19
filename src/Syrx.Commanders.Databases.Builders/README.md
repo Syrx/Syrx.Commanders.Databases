@@ -44,7 +44,7 @@ Install-Package Syrx.Commanders.Databases.Builders
 
 **PackageReference**
 ```xml
-<PackageReference Include="Syrx.Commanders.Databases.Builders" Version="2.4.5" />
+<PackageReference Include="Syrx.Commanders.Databases.Builders" Version="3.0.0" />
 ```
 
 ## Core Components

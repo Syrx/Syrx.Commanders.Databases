@@ -26,7 +26,7 @@ Install-Package Syrx.Commanders.Databases.Settings.Readers
 
 **PackageReference**
 ```xml
-<PackageReference Include="Syrx.Commanders.Databases.Settings.Readers" Version="2.4.5" />
+<PackageReference Include="Syrx.Commanders.Databases.Settings.Readers" Version="3.0.0" />
 ```
 
 ## Architecture Overview

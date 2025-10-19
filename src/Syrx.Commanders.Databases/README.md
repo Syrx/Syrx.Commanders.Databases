@@ -53,7 +53,7 @@ Install-Package Syrx.Commanders.Databases
 
 **PackageReference**
 ```xml
-<PackageReference Include="Syrx.Commanders.Databases" Version="2.4.5" />
+<PackageReference Include="Syrx.Commanders.Databases" Version="3.0.0" />
 ```
 
 > **Note**: This package provides the core database abstractions. You'll also need a database-specific connector package and configuration.

@@ -56,7 +56,7 @@ Install-Package Syrx.Commanders.Databases.Settings
 
 **PackageReference**
 ```xml
-<PackageReference Include="Syrx.Commanders.Databases.Settings" Version="2.4.5" />
+<PackageReference Include="Syrx.Commanders.Databases.Settings" Version="3.0.0" />
 ```
 
 ## Core Settings Classes

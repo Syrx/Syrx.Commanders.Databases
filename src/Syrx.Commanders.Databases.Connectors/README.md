@@ -45,7 +45,7 @@ Install-Package Syrx.Commanders.Databases.Connectors
 
 **PackageReference**
 ```xml
-<PackageReference Include="Syrx.Commanders.Databases.Connectors" Version="2.4.5" />
+<PackageReference Include="Syrx.Commanders.Databases.Connectors" Version="3.0.0" />
 ```
 
 > **Note**: This package provides the abstractions only. You'll need database-specific connector packages for actual implementations.
