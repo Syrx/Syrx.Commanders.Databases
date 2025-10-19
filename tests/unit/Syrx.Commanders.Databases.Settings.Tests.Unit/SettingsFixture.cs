@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.Concurrent;
+using System.Data;
 
 namespace Syrx.Commanders.Databases.Settings.Tests.Unit
 {
@@ -14,7 +15,7 @@ namespace Syrx.Commanders.Databases.Settings.Tests.Unit
             };
         }
 
-        public TypeSetting TestTypeSetting(Dictionary<string, CommandSetting> commands, string name = "test-type-setting")
+        public TypeSetting TestTypeSetting(ConcurrentDictionary<string, CommandSetting> commands, string name = "test-type-setting")
         {
             return new TypeSetting
             {
@@ -35,7 +36,7 @@ namespace Syrx.Commanders.Databases.Settings.Tests.Unit
                 new TypeSetting
                 {
                     Name = TestsConstants.TypeSettings.Name,
-                    Commands = new Dictionary<string, CommandSetting>
+                    Commands = new ConcurrentDictionary<string, CommandSetting>
                     {
                         ["name"] = TestCommandSetting()
                     }

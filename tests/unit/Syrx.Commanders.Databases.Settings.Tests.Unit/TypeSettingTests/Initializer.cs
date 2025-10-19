@@ -1,4 +1,5 @@
-﻿using static Xunit.Assert;
+﻿using System.Collections.Concurrent;
+using static Xunit.Assert;
 
 namespace Syrx.Commanders.Databases.Settings.Tests.Unit.TypeSettingTests
 {
@@ -12,7 +13,7 @@ namespace Syrx.Commanders.Databases.Settings.Tests.Unit.TypeSettingTests
             var result = new TypeSetting
             {
                 Name = _name,
-                Commands = new Dictionary<string, CommandSetting>
+                Commands = new ConcurrentDictionary<string, CommandSetting>
                 {
                     ["name"] = new CommandSetting 
                     { 
