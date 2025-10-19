@@ -4,6 +4,7 @@ global using Syrx.Commanders.Databases.Settings;
 global using Syrx.Commanders.Databases.Settings.Readers;
 global using System.ComponentModel;
 global using System.Data;
+global using System.Linq;
 global using System.Runtime.CompilerServices;
 global using System.Transactions;
 global using static Syrx.Validation.Contract;

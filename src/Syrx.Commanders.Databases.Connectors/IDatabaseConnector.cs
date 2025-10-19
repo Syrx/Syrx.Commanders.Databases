@@ -7,8 +7,17 @@
 namespace Syrx.Commanders.Databases.Connectors
 {
     /// <summary>
-    ///     Used to create database connections against an underlying data store.
+    /// Represents a database connector capable of creating ADO.NET connections
+    /// for the database commands used by the commander layer.
     /// </summary>
-    public interface IDatabaseConnector : IConnector<IDbConnection, CommandSetting> { }
+    /// <remarks>
+    /// Implementations of this interface are responsible for resolving the
+    /// correct <see cref="IDbConnection"/> instance for a given
+    /// <see cref="CommandSetting"/>. Typical implementations obtain a
+    /// provider factory and create a provider-specific connection instance.
+    /// </remarks>
+    public interface IDatabaseConnector : IConnector<IDbConnection, CommandSetting>
+    {
+    }
 }
 

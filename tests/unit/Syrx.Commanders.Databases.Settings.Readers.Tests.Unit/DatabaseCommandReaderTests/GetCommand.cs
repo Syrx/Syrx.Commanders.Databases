@@ -6,6 +6,7 @@
 //  =============================================================================================================================
 
 
+using System.Collections.Concurrent;
 using Microsoft.Extensions.Options;
 using Syrx.Commanders.Databases.Settings.Extensions;
 
@@ -34,13 +35,13 @@ namespace Syrx.Commanders.Databases.Settings.Readers.Tests.Unit.DatabaseCommandR
                         Types = [
                             new TypeSetting {
                                 Name = "Syrx.RootNamespaceTest",
-                                Commands = new Dictionary<string, CommandSetting>{
+                                Commands = new ConcurrentDictionary<string, CommandSetting>{
                                     [Method] = new CommandSetting{ ConnectionAlias = "test.alias.rootnamespace", CommandText = "root namespace" }
                                 }
                             },
                             new TypeSetting {
                                 Name = typeof(NotConfiguredNamespace.ParentNamespaceTest).FullName,
-                                Commands = new Dictionary<string, CommandSetting>{
+                                Commands = new ConcurrentDictionary<string, CommandSetting>{
                                     [nameof(FindsTypeInParentNamespace)] = new CommandSetting{ ConnectionAlias = "test.alias.parentnamespace", CommandText = "parent namespace" }
                                 }
                             }
@@ -51,13 +52,13 @@ namespace Syrx.Commanders.Databases.Settings.Readers.Tests.Unit.DatabaseCommandR
                         Types = [
                             new TypeSetting{
                                 Name = $"{typeof(GetCommand).Namespace}.NoCommandSettingTest",
-                                Commands = new Dictionary<string, CommandSetting>{
+                                Commands = new ConcurrentDictionary<string, CommandSetting>{
                                     [Method] = new CommandSetting{ ConnectionAlias = Alias, CommandText = CommandText }
                                 }
                             },
                             new TypeSetting{
                                 Name = $"{typeof(GetCommand).Namespace}.ParentNamespaceTest",
-                                Commands = new Dictionary<string, CommandSetting>{
+                                Commands = new ConcurrentDictionary<string, CommandSetting>{
                                     [Method] = new CommandSetting{ ConnectionAlias = "test.alias.parentnamespace", CommandText = "parent namespace" }
                                 }
                             }
@@ -68,7 +69,7 @@ namespace Syrx.Commanders.Databases.Settings.Readers.Tests.Unit.DatabaseCommandR
                         Types = [
                             new TypeSetting {
                                 Name =  "Syrx.Testing.Readers.FullNamespaceTest",
-                                Commands = new Dictionary<string, CommandSetting>{
+                                Commands = new ConcurrentDictionary<string, CommandSetting>{
                                     [Method] = new CommandSetting { ConnectionAlias = "test.alias.fullnamespacetest", CommandText = "fullnamespacetest" }
                                 }
                             }

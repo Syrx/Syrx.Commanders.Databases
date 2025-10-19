@@ -3,12 +3,12 @@
     public class NamespaceSettingBuilder
     {
         private string _namespace;
-        private Dictionary<string, TypeSetting> _types;
+        private ConcurrentDictionary<string, TypeSetting> _types;
 
         public NamespaceSettingBuilder()
         {
             _namespace = string.Empty;
-            _types = [];
+            _types = new ConcurrentDictionary<string, TypeSetting>();
         }
 
         public NamespaceSettingBuilder ForType<TType>(Action<TypeSettingBuilder<TType>> builder)
@@ -38,7 +38,7 @@
                 return;
             }
 
-            _types.Add(option.Name, option);
+            _types.TryAdd(option.Name, option);
         }
 
 

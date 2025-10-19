@@ -3,13 +3,13 @@
     public class TypeSettingBuilder<TType>
     {
         private string _name;
-        private Dictionary<string, CommandSetting> _commands;
+        private ConcurrentDictionary<string, CommandSetting> _commands;
 
         public TypeSettingBuilder()
         {
             var type = typeof(TType);
             _name = type!.FullName!;
-            _commands = [];
+            _commands = new ConcurrentDictionary<string, CommandSetting>();
         }
 
         public TypeSettingBuilder<TType> ForMethod(string method, Action<CommandSettingBuilder> builder)
@@ -24,7 +24,7 @@
                 return this;
             }
 
-            _commands.Add(method, settings!);
+            _commands.TryAdd(method, settings!);
             return this;
         }
 

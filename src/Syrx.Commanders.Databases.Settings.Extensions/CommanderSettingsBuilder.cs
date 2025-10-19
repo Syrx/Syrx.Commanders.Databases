@@ -2,13 +2,13 @@
 {
     public class CommanderSettingsBuilder
     {
-        private Dictionary<string, ConnectionStringSetting> _connectionStrings;
-        private Dictionary<string, NamespaceSetting> _settings;
+        private ConcurrentDictionary<string, ConnectionStringSetting> _connectionStrings;
+        private ConcurrentDictionary<string, NamespaceSetting> _settings;
 
         public CommanderSettingsBuilder()
         {
-            _connectionStrings = [];
-            _settings = [];
+            _connectionStrings = new ConcurrentDictionary<string, ConnectionStringSetting>();
+            _settings = new ConcurrentDictionary<string, NamespaceSetting>();
         }
 
         public CommanderSettingsBuilder AddConnectionString(string alias, string connectionString)
@@ -23,17 +23,11 @@
         {
             var settings = ConnectionStringBuilderExtensions.Build(builder);
 
-            if (_connectionStrings.TryGetValue(settings.Alias, out var setting))
+            var existing = _connectionStrings.GetOrAdd(settings.Alias, settings);
+            if (existing.ConnectionString != settings.ConnectionString)
             {
-                if (setting.ConnectionString != settings.ConnectionString)
-                {
-                    Throw<ArgumentException>(setting.ConnectionString == settings.ConnectionString, $"The alias '{settings.Alias}' is already assigned to a different connection string. \r\nCurrent connection string: {setting.ConnectionString}\r\nNew connection string: {settings.ConnectionString}"); }
-
-                _connectionStrings[settings.Alias] = settings;
-                return this;
+                Throw<ArgumentException>(existing.ConnectionString == settings.ConnectionString, $"The alias '{settings.Alias}' is already assigned to a different connection string. \r\nCurrent connection string: {existing.ConnectionString}\r\nNew connection string: {settings.ConnectionString}");
             }
-
-            _connectionStrings.Add(settings.Alias, settings);
 
             return this;
         }
@@ -86,7 +80,7 @@
                 }
             }
 
-            _settings.Add(option.Namespace, option);
+            _settings.TryAdd(option.Namespace, option);
         }
 
         private IEnumerable<NamespaceSetting> ValidateNamespaceCollections(IEnumerable<NamespaceSetting> collection)

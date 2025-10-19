@@ -2,6 +2,13 @@
 Syrx is intended to be a project that can access multiple different underlying data stores (not only RDBMSs). 
 This repository hosts code that is common to all RDBMS implementations as well as extensions to make configuration easier. 
 
+**Key Features:**
+- Configuration-driven SQL command execution
+- Automatic method-to-command resolution using `[CallerMemberName]`
+- Multi-provider database support through `DbProviderFactory`
+- **Fully thread-safe** - all components can be safely used concurrently
+- Built on top of Dapper for high performance
+
 What follows is a brief overview of each of the projects within this repository.
 
 ## Table of Contents 
