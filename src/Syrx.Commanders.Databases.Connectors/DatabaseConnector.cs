@@ -60,10 +60,10 @@ namespace Syrx.Commanders.Databases.Connectors
             Throw<ArgumentNullException>(setting != null, nameof(setting));
 
             var connectionStringSetting = GetConnectionSetting(setting?.ConnectionAlias!);
-            Throw<NullReferenceException>(connectionStringSetting != null, Messages.NoAliasedConnection, setting?.ConnectionAlias);
+            Throw<NullReferenceException>(connectionStringSetting != null, Messages.NoAliasedConnection, setting?.ConnectionAlias!);
 
             var connection = _providerPredicate.Invoke().CreateConnection();
-            Throw<NullReferenceException>(connection != null, Messages.NoConnectionCreated, setting?.ConnectionAlias);
+            Throw<NullReferenceException>(connection != null, Messages.NoConnectionCreated, setting?.ConnectionAlias!);
 
             // assign the connection and return
             connection!.ConnectionString = connectionStringSetting?.ConnectionString;
