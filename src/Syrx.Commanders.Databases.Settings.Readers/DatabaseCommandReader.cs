@@ -26,8 +26,7 @@ namespace Syrx.Commanders.Databases.Settings.Readers
                 .SelectMany(z => z.Commands)
                 .SingleOrDefault(f => f.Key == key).Value;
 
-            Throw<NullReferenceException>(result != null,
-                ErrorMessages.NoCommandSetting, key, type!.FullName);
+            Throw<NullReferenceException>(result != null, ErrorMessages.NoCommandSetting, key, type!.FullName!);
 
             return result!;
         }
