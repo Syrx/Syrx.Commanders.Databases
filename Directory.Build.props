@@ -4,7 +4,7 @@
     <!-- build info-->
     <!-- ============================================================================ -->
     <!-- Set the target frameworks for all projects -->
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net10.0</TargetFrameworks>
     <!-- Set the configuration to Debug by default -->
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <!-- Enable nullable reference types -->
@@ -20,7 +20,23 @@
     <EnablePackageValidation>true</EnablePackageValidation>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>syrx;data access;orm;micro-orm</PackageTags>
-    <PackageReleaseNotes>Last release on .NET8.0 exclusively. Next release will include .NET9.0.</PackageReleaseNotes>
+    <PackageReleaseNotes>Version 3.0.0 - .NET 10.0 Exclusive Release
+
+Breaking Changes:
+- Updated to .NET 10.0 exclusively (dropped support for .NET 8.0 and .NET 9.0)
+
+Changes since 2.4.1:
+- v3.0.0: Added .NET 9.0 support alongside .NET 8.0
+- v3.0.0: Updated Syrx submodule dependencies to latest versions
+- v3.0.0: Updated test projects to support .NET 9.0
+- v3.0.0: Updated package references and version numbers
+- v2.4.3: Maintenance updates and dependency bumps
+- v2.4.2: Maintenance updates
+- GitHub Actions: Updated to actions/checkout@6, actions/download-artifact@6, actions/upload-artifact@5, actions/setup-dotnet@5
+- Submodule Updates: Multiple Syrx submodule updates for improved stability and features
+
+Known Issues:
+- xunit.analyzers 1.26.0 bug workaround applied (MemberDataShouldReferenceValidMember analyzer disabled via Directory.Build.props)</PackageReleaseNotes>
     <!-- ============================================================================ -->
     <!-- organization info -->
     <!-- ============================================================================ -->
@@ -35,6 +51,16 @@
     <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.25">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  
+  <!-- Globally exclude xunit.analyzers from all projects to work around bug in version 1.26.0 -->
+  <!-- Bug: MemberDataShouldReferenceValidMember analyzer throws InvalidOperationException -->
+  <!-- This applies to all projects that reference xunit (directly or transitively) -->
+  <ItemGroup>
+    <PackageReference Update="xunit.analyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>all</ExcludeAssets>
     </PackageReference>
   </ItemGroup>
 </Project>

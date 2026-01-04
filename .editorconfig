@@ -116,6 +116,11 @@ dotnet_diagnostic.CA1068.severity = none
 
 # xUnit1024: Test methods cannot have overloads
 dotnet_diagnostic.xUnit1024.severity = suggestion
+
+# xUnit1042: The member referenced by the MemberData attribute returns untyped data rows
+# Suppress due to known issue with xunit.analyzers 1.26.0 causing InvalidOperationException
+dotnet_diagnostic.xUnit1042.severity = none
+
 csharp_using_directive_placement = outside_namespace:silent
 csharp_prefer_simple_using_statement = true:suggestion
 csharp_style_namespace_declarations = block_scoped:silent

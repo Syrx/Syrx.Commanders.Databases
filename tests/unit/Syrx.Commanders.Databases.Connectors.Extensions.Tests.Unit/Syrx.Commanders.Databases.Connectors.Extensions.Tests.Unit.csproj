@@ -1,10 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
@@ -35,30 +33,6 @@
 
   <ItemGroup>
     <PackageReference Update="DotNet.ReproducibleBuilds" Version="1.2.39" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-    <PackageReference Include="Castle.Core" Version="5.2.1" />
-    <PackageReference Include="Microsoft.CodeCoverage" Version="18.0.1" />
-    <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="18.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="System.Diagnostics.EventLog" Version="10.0.1" />
-    <PackageReference Include="xunit.analyzers" Version="1.26.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-    <PackageReference Include="Castle.Core" Version="5.2.1" />
-    <PackageReference Include="Microsoft.CodeCoverage" Version="18.0.1" />
-    <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="18.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="System.Diagnostics.EventLog" Version="10.0.1" />
-    <PackageReference Include="xunit.analyzers" Version="1.26.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
   </ItemGroup>
 
 </Project>
