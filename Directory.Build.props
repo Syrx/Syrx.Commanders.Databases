@@ -25,16 +25,6 @@
 Breaking Changes:
 - Updated to .NET 10.0 exclusively (dropped support for .NET 8.0 and .NET 9.0)
 
-Changes since 2.4.1:
-- v3.0.0: Added .NET 9.0 support alongside .NET 8.0
-- v3.0.0: Updated Syrx submodule dependencies to latest versions
-- v3.0.0: Updated test projects to support .NET 9.0
-- v3.0.0: Updated package references and version numbers
-- v2.4.3: Maintenance updates and dependency bumps
-- v2.4.2: Maintenance updates
-- GitHub Actions: Updated to actions/checkout@6, actions/download-artifact@6, actions/upload-artifact@5, actions/setup-dotnet@5
-- Submodule Updates: Multiple Syrx submodule updates for improved stability and features
-
 Known Issues:
 - xunit.analyzers 1.26.0 bug workaround applied (MemberDataShouldReferenceValidMember analyzer disabled via Directory.Build.props)</PackageReleaseNotes>
     <!-- ============================================================================ -->
