@@ -5,6 +5,10 @@
 //  =============================================================================================================================
 namespace Syrx.Commanders.Databases
 {
+    /// <summary>
+    /// Partial declaration of <see cref="DatabaseCommander{TRepository}"/> containing asynchronous command execution APIs.
+    /// </summary>
+    /// <typeparam name="TRepository">The repository type whose methods are resolved to configured database commands.</typeparam>
     public sealed partial class DatabaseCommander<TRepository>
     {
         /// <summary>

@@ -23,6 +23,21 @@ namespace Syrx.Commanders.Databases.Connectors
         private readonly Dictionary<string, ConnectionStringSetting> _connectionsByAlias = new(StringComparer.Ordinal);
         private readonly ConcurrentDictionary<string, ConnectionStringSetting> _connectionCache = new();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DatabaseConnector"/> class.
+        /// </summary>
+        /// <param name="settings">
+        /// The commander settings containing configured connection aliases and connection strings.
+        /// </param>
+        /// <param name="providerPredicate">
+        /// A delegate that returns the <see cref="DbProviderFactory"/> used to create database connections.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="settings"/> or <paramref name="providerPredicate"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when duplicate connection aliases are found in <paramref name="settings"/>.
+        /// </exception>
         public DatabaseConnector(
             ICommanderSettings settings,
             Func<DbProviderFactory> providerPredicate

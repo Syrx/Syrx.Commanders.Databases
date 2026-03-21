@@ -1,16 +1,29 @@
 ﻿namespace Syrx.Commanders.Databases.Settings.Extensions
 {
+    /// <summary>
+    /// Builds a <see cref="CommanderSettings"/> instance by collecting connection string and command mappings.
+    /// </summary>
     public class CommanderSettingsBuilder
     {
         private ConcurrentDictionary<string, ConnectionStringSetting> _connectionStrings;
         private ConcurrentDictionary<string, NamespaceSetting> _settings;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommanderSettingsBuilder"/> class.
+        /// </summary>
         public CommanderSettingsBuilder()
         {
             _connectionStrings = new ConcurrentDictionary<string, ConnectionStringSetting>();
             _settings = new ConcurrentDictionary<string, NamespaceSetting>();
         }
 
+        /// <summary>
+        /// Adds a named connection string using the supplied alias and connection string values.
+        /// </summary>
+        /// <param name="alias">The alias used to reference the connection string.</param>
+        /// <param name="connectionString">The connection string value.</param>
+        /// <returns>The current <see cref="CommanderSettingsBuilder"/> instance.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="alias"/> or <paramref name="connectionString"/> is <see langword="null"/>, empty, or whitespace.</exception>
         public CommanderSettingsBuilder AddConnectionString(string alias, string connectionString)
         {
             Throw<ArgumentNullException>(!string.IsNullOrWhiteSpace(alias), nameof(alias));
@@ -19,6 +32,12 @@
             return AddConnectionString(builder);
         }
 
+        /// <summary>
+        /// Adds a named connection string using the supplied builder delegate.
+        /// </summary>
+        /// <param name="builder">The delegate that configures a <see cref="ConnectionStringSettingsBuilder"/> instance.</param>
+        /// <returns>The current <see cref="CommanderSettingsBuilder"/> instance.</returns>
+        /// <exception cref="ArgumentException">Thrown when the alias already exists with a different connection string value.</exception>
         public CommanderSettingsBuilder AddConnectionString(Action<ConnectionStringSettingsBuilder> builder)
         {
             var settings = ConnectionStringBuilderExtensions.Build(builder);
@@ -32,12 +51,23 @@
             return this;
         }
 
+        /// <summary>
+        /// Adds a command namespace definition using the supplied builder delegate.
+        /// </summary>
+        /// <param name="builder">The delegate that configures a <see cref="NamespaceSettingBuilder"/> instance.</param>
+        /// <returns>The current <see cref="CommanderSettingsBuilder"/> instance.</returns>
         public CommanderSettingsBuilder AddCommand(Action<NamespaceSettingBuilder> builder)
         {
             var options = NamespaceSettingBuilderExtensions.Build(builder);
             return AddCommand(options);
         }
 
+        /// <summary>
+        /// Adds a command namespace definition to the builder.
+        /// </summary>
+        /// <param name="options">The namespace definition to add.</param>
+        /// <returns>The current <see cref="CommanderSettingsBuilder"/> instance.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
         public CommanderSettingsBuilder AddCommand(NamespaceSetting options)
         {
             Throw<ArgumentNullException>(options != null, nameof(options));

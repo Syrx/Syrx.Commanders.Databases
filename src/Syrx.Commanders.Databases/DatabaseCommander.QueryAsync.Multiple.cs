@@ -7,6 +7,10 @@
 
 namespace Syrx.Commanders.Databases
 {
+    /// <summary>
+    /// Partial declaration of <see cref="DatabaseCommander{TRepository}"/> containing asynchronous multi-result query APIs.
+    /// </summary>
+    /// <typeparam name="TRepository">The repository type whose methods are resolved to configured database commands.</typeparam>
     public sealed partial class DatabaseCommander<TRepository> //: ICommander
     {
         private static readonly MethodInfo GridReadAsyncMethodDefinition = typeof(SqlMapper.GridReader).GetMethods()
