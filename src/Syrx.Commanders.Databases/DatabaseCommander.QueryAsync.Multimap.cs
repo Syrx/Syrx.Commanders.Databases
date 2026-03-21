@@ -1,10 +1,9 @@
-﻿//  ============================================================================================================================= 
+//  ============================================================================================================================= 
 //  author       : david sexton (@sextondjc | sextondjc.com)
 //  date         : 2017.10.15 (17:58)
 //  licence      : This file is subject to the terms and conditions defined in file 'LICENSE.txt', which is part of this source code package.
 //  =============================================================================================================================
 
-using System.Linq;
 
 namespace Syrx.Commanders.Databases
 {
@@ -27,7 +26,7 @@ namespace Syrx.Commanders.Databases
         {
             var setting = GetCommandSetting(method);
             var command = GetCommandDefinition(setting, parameters, cancellationToken: cancellationToken);
-            var connection = _connector.CreateConnection(setting);
+            using var connection = _connector.CreateConnection(setting);
             return await connection.QueryAsync<TResult>(command);
         }
 

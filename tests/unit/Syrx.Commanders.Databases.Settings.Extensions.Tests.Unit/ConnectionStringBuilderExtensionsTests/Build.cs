@@ -1,5 +1,3 @@
-﻿using B = Syrx.Commanders.Databases.Settings.Extensions.ConnectionStringBuilderExtensions;
-
 
 namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.ConnectionStringBuilderExtensionsTests
 {
@@ -12,7 +10,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.ConnectionStr
         [Fact]
         public void SuccessfullyWithGenericType()
         {
-            var result = B.Build(x => x.UseConnectionString<Build>(ConnectionString));
+            var result = ConnectionStringBuilderExtensionsAlias.Build(x => x.UseConnectionString<Build>(ConnectionString));
 
             Equal(typeof(Build).FullName, result.Alias);
             Equal(ConnectionString, result.ConnectionString);
@@ -23,7 +21,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.ConnectionStr
         [MemberData(nameof(Generators.NullEmptyWhiteSpace), MemberType = typeof(Generators))]
         public void NullEmptyWhitespaceAliasThrowsArgumentException(string alias)
         {
-            var result = Throws<ArgumentNullException>(() => B.Build(x => x.UseConnectionString(alias, ConnectionString)));
+            var result = Throws<ArgumentNullException>(() => ConnectionStringBuilderExtensionsAlias.Build(x => x.UseConnectionString(alias, ConnectionString)));
             result.ArgumentNull(nameof(alias));
         }
 
@@ -31,7 +29,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.ConnectionStr
         [MemberData(nameof(Generators.NullEmptyWhiteSpace), MemberType = typeof(Generators))]
         public void NullEmptyWhitespaceConnectionThrowsArgumentException(string connectionString)
         {
-            var result = Throws<ArgumentNullException>(() => B.Build(x => x.UseConnectionString(Alias, connectionString)));
+            var result = Throws<ArgumentNullException>(() => ConnectionStringBuilderExtensionsAlias.Build(x => x.UseConnectionString(Alias, connectionString)));
             result.ArgumentNull(nameof(connectionString));
         }
 
@@ -40,7 +38,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.ConnectionStr
         {
             const string connectionString = "another-connection-string";
             var result =
-                B.Build(x => x
+                ConnectionStringBuilderExtensionsAlias.Build(x => x
                     .UseConnectionString(Alias, ConnectionString)
                     .UseConnectionString(Alias, connectionString));
 

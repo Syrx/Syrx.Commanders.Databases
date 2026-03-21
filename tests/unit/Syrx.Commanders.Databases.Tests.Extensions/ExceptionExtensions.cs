@@ -1,4 +1,3 @@
-﻿using static Xunit.Assert;
 
 namespace Syrx.Commanders.Databases.Tests.Extensions
 {

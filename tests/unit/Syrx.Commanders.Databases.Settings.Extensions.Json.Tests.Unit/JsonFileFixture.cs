@@ -1,6 +1,3 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Syrx.Commanders.Databases.Tests.Extensions;
 
 namespace Syrx.Commanders.Databases.Settings.Extensions.Json.Tests.Unit
 {

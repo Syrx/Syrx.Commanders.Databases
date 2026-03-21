@@ -1,5 +1,3 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Syrx.Commanders.Databases.Settings.Extensions.Json
 {

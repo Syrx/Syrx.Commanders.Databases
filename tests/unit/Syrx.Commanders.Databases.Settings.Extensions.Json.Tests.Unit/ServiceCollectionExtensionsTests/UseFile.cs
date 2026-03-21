@@ -1,7 +1,3 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Syrx.Extensions;
-using static Xunit.Assert;
 
 namespace Syrx.Commanders.Databases.Settings.Extensions.Json.Tests.Unit.ServiceCollectionExtensionsTests
 {
@@ -29,6 +25,16 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Json.Tests.Unit.ServiceC
             NotNull(resolved);
 
             Equivalent(settings, resolved);
+        }
+
+        [Fact]
+        public void UseFileRejectsPathTraversalFileName()
+        {
+            var services = fixture.Services;
+            var builder = fixture.ConfigurationBuilder;
+            var result = Throws<ArgumentException>(() => services.UseSyrx(a => a.UseFile("..\\settings.json", builder)));
+
+            Contains("not an approved JSON settings file name", result.Message);
         }
 
 

@@ -1,5 +1,3 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Syrx.Extensions;
 
 namespace Syrx.Commanders.Databases.Settings.Readers.Extensions
 {

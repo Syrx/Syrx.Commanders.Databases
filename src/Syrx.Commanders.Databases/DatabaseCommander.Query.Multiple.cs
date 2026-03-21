@@ -1,12 +1,24 @@
-﻿//  ============================================================================================================================= 
+//  ============================================================================================================================= 
 //  author       : david sexton (@sextondjc | sextondjc.com)
 //  date         : 2017.10.15 (17:58)
 //  licence      : This file is subject to the terms and conditions defined in file 'LICENSE.txt', which is part of this source code package.
 //  =============================================================================================================================
+
 namespace Syrx.Commanders.Databases
 {
     public sealed partial class DatabaseCommander<TRepository>
     {
+        private static readonly MethodInfo GridReadMethodDefinition = typeof(SqlMapper.GridReader).GetMethods()
+            .Single(m =>
+                m.Name == "Read" &&
+                m.IsGenericMethodDefinition &&
+                m.GetParameters().Length == 1 &&
+                m.GetParameters()[0].ParameterType == typeof(bool));
+
+        private static readonly MethodInfo EmptyMethodDefinition = typeof(Enumerable).GetMethod(nameof(Enumerable.Empty))!;
+        private static readonly ConcurrentDictionary<Type, MethodInfo> GridReadMethods = new();
+        private static readonly ConcurrentDictionary<Type, MethodInfo> EmptyMethods = new();
+
         /// <summary>
         /// Executes a query that returns multiple result sets and applies a mapping function to transform the first result set into the desired output.
         /// </summary>
@@ -433,17 +445,14 @@ namespace Syrx.Commanders.Databases
                 var actualResults = new object[16];
                 for (int i = 0; i < actualTypeCount; i++)
                 {
-                    var readMethod = typeof(SqlMapper.GridReader).GetMethods()
-                        .Where(m => m.Name == "Read" && m.IsGenericMethodDefinition && m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType == typeof(bool))
-                        .Single()
-                        .MakeGenericMethod(types[i]);
+                    var readMethod = GridReadMethods.GetOrAdd(types[i], type => GridReadMethodDefinition.MakeGenericMethod(type));
                     actualResults[i] = readMethod.Invoke(reader, new object[] { true })!;
                 }
                 
                 // Create properly typed empty enumerables for ignored types
                 for (int i = actualTypeCount; i < 16; i++)
                 {
-                    var emptyMethod = typeof(Enumerable).GetMethod("Empty")!.MakeGenericMethod(types[i]);
+                    var emptyMethod = EmptyMethods.GetOrAdd(types[i], type => EmptyMethodDefinition.MakeGenericMethod(type));
                     actualResults[i] = emptyMethod.Invoke(null, null)!;
                 }
                 

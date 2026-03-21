@@ -54,7 +54,7 @@ namespace Syrx.Commanders.Databases
             var setting = GetCommandSetting(method);
             using (var connection = _connector.CreateConnection(setting))
             {
-                connection.Open();
+                await OpenConnectionAsync(connection, cancellationToken);
                 using (var transaction = connection.BeginTransaction(setting.IsolationLevel))
                 {
                     try
@@ -64,13 +64,34 @@ namespace Syrx.Commanders.Databases
                         transaction.Commit();
                         return result;
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        transaction.Rollback();
+                        try
+                        {
+                            transaction.Rollback();
+                        }
+                        catch (Exception rollbackEx)
+                        {
+                            TraceExecuteRollbackFailure(rollbackEx, setting, method, isAsync: true);
+                        }
+
+                        TraceExecuteFailure(ex, setting, method, isAsync: true);
                         throw;
                     }
                 }
             }
+        }
+
+        private static async Task OpenConnectionAsync(IDbConnection connection, CancellationToken cancellationToken)
+        {
+            if (connection is DbConnection dbConnection)
+            {
+                await dbConnection.OpenAsync(cancellationToken).ConfigureAwait(false);
+                return;
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+            connection.Open();
         }
 
         /// <summary>
@@ -93,16 +114,36 @@ namespace Syrx.Commanders.Databases
             TransactionScopeOption scopeOption = TransactionScopeOption.Suppress,
             TransactionScopeAsyncFlowOption asyncFlowOption = TransactionScopeAsyncFlowOption.Enabled,
             CancellationToken cancellationToken = default, [CallerMemberName] string method = null)
+            => await ExecuteAsync(
+                _ => Task.FromResult(map()),
+                scopeOption,
+                asyncFlowOption,
+                cancellationToken,
+                method);
+
+        /// <summary>
+        /// Asynchronously executes a user-defined async function within a transaction scope and returns the result.
+        /// </summary>
+        /// <typeparam name="TResult">The return type of the mapping function.</typeparam>
+        /// <param name="map">An async function to execute within the transaction scope.</param>
+        /// <param name="scopeOption">The transaction scope option. Defaults to <see cref="TransactionScopeOption.Suppress"/>.</param>
+        /// <param name="asyncFlowOption">The async flow option for the transaction scope. Defaults to <see cref="TransactionScopeAsyncFlowOption.Enabled"/>.</param>
+        /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+        /// <param name="method">The name of the calling method. This parameter is automatically populated by the compiler.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the result of executing the <paramref name="map"/> function.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="map"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">Thrown when the operation is canceled via the <paramref name="cancellationToken"/>.</exception>
+        public async Task<TResult> ExecuteAsync<TResult>(Func<CancellationToken, Task<TResult>> map,
+            TransactionScopeOption scopeOption = TransactionScopeOption.Suppress,
+            TransactionScopeAsyncFlowOption asyncFlowOption = TransactionScopeAsyncFlowOption.Enabled,
+            CancellationToken cancellationToken = default, [CallerMemberName] string method = null)
         {
-            // i'm honestly not lovin this method. looks like it could cause
-            // too many holes and could lead to some seriously, serious
-            // nasty, nasty.             
-            using (var scope = new TransactionScope(scopeOption, TransactionScopeAsyncFlowOption.Enabled))
+            Throw<ArgumentNullException>(map != null, nameof(map));
+
+            using (var scope = new TransactionScope(scopeOption, asyncFlowOption))
             {
-                // could also be abused as sync over async.
-                // todo: write tests to prove abuse and write about 
-                // why it's bad, bad, bad. 
-                var result = await Task.FromResult(map());
+                cancellationToken.ThrowIfCancellationRequested();
+                var result = await map(cancellationToken).ConfigureAwait(false);
                 scope.Complete();
                 return result;
             }

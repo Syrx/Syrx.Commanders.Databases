@@ -26,7 +26,7 @@
             var existing = _connectionStrings.GetOrAdd(settings.Alias, settings);
             if (existing.ConnectionString != settings.ConnectionString)
             {
-                Throw<ArgumentException>(existing.ConnectionString == settings.ConnectionString, $"The alias '{settings.Alias}' is already assigned to a different connection string. \r\nCurrent connection string: {existing.ConnectionString}\r\nNew connection string: {settings.ConnectionString}");
+                Throw<ArgumentException>(existing.ConnectionString == settings.ConnectionString, $"The alias '{settings.Alias}' is already assigned to a different connection string.");
             }
 
             return this;

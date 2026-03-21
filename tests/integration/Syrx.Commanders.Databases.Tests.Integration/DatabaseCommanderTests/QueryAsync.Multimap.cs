@@ -24,7 +24,7 @@
 
         }
 
-        [Theory(Skip = "Change to the integration test breaks non-parameterized assertion.")]
+        [Theory]
         [MemberData(nameof(ModelGenerators.Multimap.SingleTypeData), MemberType = typeof(ModelGenerators.Multimap))]
         public virtual async Task SingleTypeWithParameters<T1>(SingleType<T1> input)
         {

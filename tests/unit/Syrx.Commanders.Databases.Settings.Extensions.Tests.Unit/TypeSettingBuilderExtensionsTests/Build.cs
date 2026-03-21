@@ -1,4 +1,3 @@
-﻿using B = Syrx.Commanders.Databases.Settings.Extensions.TypeSettingBuilderExtensions;
 
 namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.TypeSettingBuilderExtensionsTests
 {
@@ -11,7 +10,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.TypeSettingBu
         [Fact]
         public void ForGenericType()
         {
-            var result = B.Build<Build>(x => x
+            var result = TypeSettingBuilderExtensionsAlias.Build<Build>(x => x
                 .ForMethod(
                     nameof(ForGenericType),
                     x => x.UseCommandText(CommandText)
@@ -27,7 +26,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.TypeSettingBu
             var type = typeof(Build);
             var method = nameof(ForSpecifiedType);
 
-            var result = B.Build<Build>(x => x.ForMethod(method, y => y.UseCommandText(CommandText).UseConnectionAlias(Alias)));
+            var result = TypeSettingBuilderExtensionsAlias.Build<Build>(x => x.ForMethod(method, y => y.UseCommandText(CommandText).UseConnectionAlias(Alias)));
             NotNull(result);
         }
 
@@ -35,7 +34,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.TypeSettingBu
         [Fact]
         public void NullActionThrowsArgumentNullException()
         {
-            var result = Throws<ArgumentNullException>(() => B.Build<Build>(x => x.ForMethod(nameof(NullActionThrowsArgumentNullException), null)));
+            var result = Throws<ArgumentNullException>(() => TypeSettingBuilderExtensionsAlias.Build<Build>(x => x.ForMethod(nameof(NullActionThrowsArgumentNullException), null)));
             result.ArgumentNull("builder");
         }
 
@@ -45,7 +44,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.TypeSettingBu
         {
             Action<CommandSettingBuilder> builder = (x) => x.UseConnectionAlias(Alias).UseCommandText(CommandText);
 
-            var result = Throws<ArgumentNullException>(() => B.Build<Build>(x => x.ForMethod(method, builder)));
+            var result = Throws<ArgumentNullException>(() => TypeSettingBuilderExtensionsAlias.Build<Build>(x => x.ForMethod(method, builder)));
             result.ArgumentNull(nameof(method));
         }
     }

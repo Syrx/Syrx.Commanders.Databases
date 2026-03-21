@@ -1,7 +1,3 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using System.Xml;
 
 namespace Syrx.Commanders.Databases.Settings.Extensions.Xml.Tests.Unit
 {

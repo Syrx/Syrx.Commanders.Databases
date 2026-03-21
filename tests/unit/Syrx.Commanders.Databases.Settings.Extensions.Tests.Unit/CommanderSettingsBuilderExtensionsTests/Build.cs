@@ -1,4 +1,3 @@
-﻿using Z = Syrx.Commanders.Databases.Settings.Extensions.CommanderSettingsBuilderExtensions;
 
 namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.CommanderSettingsBuilderExtensionsTests
 {
@@ -11,7 +10,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.CommanderSett
         [Fact]
         public void DuplicateConnectionStringsSupported()
         {
-            var result = Z.Build(x => x
+            var result = CommanderSettingsBuilderExtensionsAlias.Build(x => x
                 .AddConnectionString(Alias, ConnectionString)
                 .AddConnectionString(Alias, ConnectionString)
                 .AddCommand(c => c
@@ -26,7 +25,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.CommanderSett
         [Fact]
         public void DuplicateConnectionsWithBuilderSupported()
         {
-            var result = Z.Build(x => x
+            var result = CommanderSettingsBuilderExtensionsAlias.Build(x => x
                     .AddConnectionString(y => y.UseAlias(Alias).UseConnectionString(ConnectionString))
                     .AddConnectionString(y => y.UseAlias(Alias).UseConnectionString(ConnectionString))
                     .AddCommand(c => c
@@ -43,17 +42,17 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.CommanderSett
         {
             const string DifferentConnectionString = "different-connection-string";
 
-            var result = Throws<ArgumentException>(() => Z.Build(x => x
+            var result = Throws<ArgumentException>(() => CommanderSettingsBuilderExtensionsAlias.Build(x => x
                 .AddConnectionString(Alias, ConnectionString)
                 .AddConnectionString(Alias, DifferentConnectionString)));
 
-            result.HasMessage($"The alias '{Alias}' is already assigned to a different connection string. \r\nCurrent connection string: {ConnectionString}\r\nNew connection string: {DifferentConnectionString}");
+            result.HasMessage($"The alias '{Alias}' is already assigned to a different connection string.");
         }
 
         [Fact]
         public void AddCommandSuccessully()
         {
-            var result = Z.Build(
+            var result = CommanderSettingsBuilderExtensionsAlias.Build(
                 a => a
                 .AddConnectionString(b => b.UseAlias(Alias).UseConnectionString(ConnectionString))
                 .AddCommand(
@@ -70,7 +69,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.CommanderSett
         [Fact]
         public void AddMultipleCommandsSuccessfully()
         {
-            var result = Z.Build(
+            var result = CommanderSettingsBuilderExtensionsAlias.Build(
                 a => a.AddCommand(
                     b => b.ForType<Build>(
                         c => c.ForMethod("MethodName",
@@ -88,7 +87,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.CommanderSett
         [Fact]
         public void CommandsInTheSameNamespaceShouldGroupTogether()
         {
-            var result = Z.Build(
+            var result = CommanderSettingsBuilderExtensionsAlias.Build(
                 a => a
                 .AddCommand(
                     c => c.ForType<Build>(
@@ -112,7 +111,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.CommanderSett
         [Fact]
         public void AcceptsLastEntryFromBuilder()
         {
-            var result = Z.Build(x => x
+            var result = CommanderSettingsBuilderExtensionsAlias.Build(x => x
                     .AddCommand(c => c
                         .ForType<Build>(
                             t => t.ForMethod(
@@ -131,7 +130,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.CommanderSett
         [Fact]
         public void AcceptsChainedMethods()
         {
-            var result = Z.Build(x => x
+            var result = CommanderSettingsBuilderExtensionsAlias.Build(x => x
                     .AddCommand(c => c
                         .ForType<Build>(
                             t => t
@@ -149,14 +148,14 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.CommanderSett
         [Fact]
         public void WithoutBuilder()
         {
-            var command = Z.Build(x => x
+            var command = CommanderSettingsBuilderExtensionsAlias.Build(x => x
                 .AddCommand(a => a
                     .ForType<Build>(b => b
                         .ForMethod(nameof(WithoutBuilder),
                             c => c.UseCommandText(CommandText)
                                   .UseConnectionAlias(Alias)))));
 
-            var result = Z.Build(a => a.AddCommand(command.Namespaces.Single()));
+            var result = CommanderSettingsBuilderExtensionsAlias.Build(a => a.AddCommand(command.Namespaces.Single()));
         }
     }
 }

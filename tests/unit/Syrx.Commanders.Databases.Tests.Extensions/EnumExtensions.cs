@@ -1,4 +1,3 @@
-﻿using System.Data;
 
 namespace Syrx.Commanders.Databases.Tests.Extensions
 {
