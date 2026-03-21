@@ -33,10 +33,10 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Xml
 
         private static bool IsTrustedXmlSettingsFileName(string fileName)
         {
-            var isLeafFileName = Path.GetFileName(fileName) == fileName;
+            var containsDirectorySeparator = fileName.Contains('/') || fileName.Contains('\\');
             var hasXmlExtension = string.Equals(Path.GetExtension(fileName), ".xml", StringComparison.OrdinalIgnoreCase);
 
-            return isLeafFileName && hasXmlExtension;
+            return !containsDirectorySeparator && hasXmlExtension;
         }
     }
 }

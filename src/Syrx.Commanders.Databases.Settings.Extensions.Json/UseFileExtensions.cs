@@ -33,10 +33,10 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Json
 
         private static bool IsTrustedJsonSettingsFileName(string fileName)
         {
-            var isLeafFileName = Path.GetFileName(fileName) == fileName;
+            var containsDirectorySeparator = fileName.Contains('/') || fileName.Contains('\\');
             var hasJsonExtension = string.Equals(Path.GetExtension(fileName), ".json", StringComparison.OrdinalIgnoreCase);
 
-            return isLeafFileName && hasJsonExtension;
+            return !containsDirectorySeparator && hasJsonExtension;
         }
     }
 }
