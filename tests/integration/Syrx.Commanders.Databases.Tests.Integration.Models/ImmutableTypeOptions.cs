@@ -39,7 +39,7 @@ namespace Syrx.Commanders.Databases.Tests.Integration.Models
                 return new ImmutableType(
                     _id,
                     _name ?? $"entry {_id}",
-                    _value == 0 ? _value : (_id * 10),
+                    _value == 0 ? _value : (_id * 10m),
                     _modified
                     );
             }
