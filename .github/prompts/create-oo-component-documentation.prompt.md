@@ -2,7 +2,7 @@
 name: create-oo-component-documentation
 agent: 'agent'
 description: 'Create comprehensive, standardized documentation for object-oriented components following industry best practices and architectural documentation standards.'
-tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'fetch', 'githubRepo', 'problems', 'runTasks', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'usages', 'vscodeAPI']
+tools: ['search', 'read', 'edit', 'web']
 ---
 # Generate Standard OO Component Documentation
 

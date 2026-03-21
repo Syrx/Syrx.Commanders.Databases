@@ -4,7 +4,7 @@ namespace Syrx.Commanders.Databases.Connectors.Extensions.Tests.Unit.DatabaseCon
     public class UseConnector : IClassFixture<DatabaseConnectorExtensionsFixture>
     {
         private readonly IServiceCollection _services;
-        private DatabaseConnectorExtensionsFixture _fixture;
+        private readonly DatabaseConnectorExtensionsFixture _fixture;
 
         public UseConnector(DatabaseConnectorExtensionsFixture fixture)
         {
