@@ -16,27 +16,49 @@ on:
 env:
   NuGetDirectory: ${{ github.workspace }}/src/*/bin/Release/
 
+permissions: {}
+
 defaults:
   run:
     shell: pwsh
 
 jobs:
+  documentation_quality:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      with:
+        fetch-depth: 1
+    - name: Update Git submodules
+      run: git submodule update --init --recursive
+    - name: Run documentation metrics
+      run: ./scripts/Get-DocumentationMetrics.ps1 -MinimumScore 85 -EnforceMinimum -OutputJsonPath ./.docs/reports/documentation-metrics.json
+    - name: Upload documentation metrics artifact
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      with:
+        name: documentation-metrics
+        if-no-files-found: error
+        retention-days: 14
+        path: ./.docs/reports/documentation-metrics.json
+
   create_nuget:
     runs-on: ubuntu-latest
+    needs: [ documentation_quality ]
+    permissions:
+      contents: read # Required for repository checkout.
     strategy:
       matrix:
         dotnet-version: [ '8.0.x' ]
         
     steps:    
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       name: Setup dotnet ${{ matrix.dotnet-version }}
-      with:
-        submodules: recursive
-
-    - name: Initialize submodules
+    - name: Update Git submodules
       run: git submodule update --init --recursive
-        
-    - uses: actions/setup-dotnet@v5
+     
+    - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
       with:
           dotnet-version: ${{ matrix.dotnet-version }}
       # You can test your matrix by printing the current dotnet version
@@ -47,7 +69,7 @@ jobs:
     - run: dotnet build --configuration Release
 
     # Publish the NuGet package as an artifact, so they can be used in the following jobs
-    - uses: actions/upload-artifact@v5
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
         name: nuget
         if-no-files-found: error
@@ -60,24 +82,24 @@ jobs:
     steps:
       # Install the .NET SDK indicated in the global.json file
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
 
       # Download the NuGet package created in the previous job
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: nuget
           path: ${{ env.NuGetDirectory }}
 
   run_test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # Required for repository checkout.
     steps:
-    - uses: actions/checkout@v6
-      with: 
-        submodules: recursive
-    - name: Setup .NET ${{ matrix.dotnet-version }}
-      
-
-      uses: actions/setup-dotnet@v5
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+    - name: Update Git submodules
+      run: git submodule update --init --recursive
+    - name: Setup .NET
+      uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
     - name: Run tests
       run: dotnet test --configuration Release
 
@@ -90,14 +112,14 @@ jobs:
     needs: [ validate_nuget, run_test ]
     steps:
       # Download the NuGet package created in the previous job
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: nuget
           path: ${{ env.NuGetDirectory }}
 
       # Install the .NET SDK indicated in the global.json file
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
 
       # Publish all NuGet packages to NuGet.org
       # Use --skip-duplicate to prevent errors if a package with the same version already exists.

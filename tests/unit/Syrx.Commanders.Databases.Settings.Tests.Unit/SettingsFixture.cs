@@ -1,5 +1,3 @@
-﻿using System.Collections.Concurrent;
-using System.Data;
 
 namespace Syrx.Commanders.Databases.Settings.Tests.Unit
 {

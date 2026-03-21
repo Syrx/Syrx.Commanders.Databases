@@ -1,5 +1,3 @@
-﻿using System.Collections.Concurrent;
-using static Xunit.Assert;
 
 namespace Syrx.Commanders.Databases.Settings.Tests.Unit.TypeSettingTests
 {

@@ -1,6 +1,3 @@
-﻿using System.Data;
-using static Xunit.Assert;
-using static Syrx.Commanders.Databases.Settings.Tests.Unit.TestsConstants;
 
 namespace Syrx.Commanders.Databases.Settings.Tests.Unit.CommandSettingTests
 {

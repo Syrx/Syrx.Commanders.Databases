@@ -1,4 +1,4 @@
-﻿//  ============================================================================================================================= 
+//  ============================================================================================================================= 
 //  author       : david sexton (@sextondjc | sextondjc.com)
 //  date         : 2017.10.15 (17:59)
 //  modified     : 2017.10.15 (22:43)
@@ -6,9 +6,6 @@
 //  =============================================================================================================================
 
 
-using System.Collections.Concurrent;
-using Microsoft.Extensions.Options;
-using Syrx.Commanders.Databases.Settings.Extensions;
 
 namespace Syrx.Commanders.Databases.Settings.Readers.Tests.Unit.DatabaseCommandReaderTests
 {

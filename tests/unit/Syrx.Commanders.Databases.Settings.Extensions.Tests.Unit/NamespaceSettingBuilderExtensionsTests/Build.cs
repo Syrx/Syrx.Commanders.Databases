@@ -1,4 +1,3 @@
-﻿using B = Syrx.Commanders.Databases.Settings.Extensions.NamespaceSettingBuilderExtensions;
 
 namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.NamespaceSettingBuilderExtensionsTests
 {
@@ -11,14 +10,14 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.NamespaceSett
         [Fact]
         public void NullBuilderThrowsArgumentNullException()
         {
-            var result = Throws<ArgumentNullException>(() => B.Build(null));
+            var result = Throws<ArgumentNullException>(() => NamespaceSettingBuilderExtensionsAlias.Build(null));
             result.ArgumentNull("factory");
         }
 
         [Fact]
         public void Successfully()
         {
-            var result = B.Build(
+            var result = NamespaceSettingBuilderExtensionsAlias.Build(
                 x => x.ForType<Build>(
                     y => y.ForMethod(nameof(Successfully),
                         z => z.UseCommandText(CommandText)
@@ -29,7 +28,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.NamespaceSett
         [Fact]
         public void SupportsChainedMethodsPerType()
         {
-            var result = B.Build(
+            var result = NamespaceSettingBuilderExtensionsAlias.Build(
                 x => x.ForType<Build>(
                     y => y.ForMethod(nameof(SupportsChainedMethodsPerType), z => z.UseCommandText(CommandText).UseConnectionAlias(Alias))
                           .ForMethod("AnotherTestMethod", z => z.UseConnectionAlias(Alias).UseCommandText("more-command-text"))));
@@ -43,7 +42,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.NamespaceSett
         public void NullEmptyWhitespaceMethodNameThrowsArumentNullException(string method)
         {
             var result = Throws<ArgumentNullException>(() =>
-                B.Build(
+                NamespaceSettingBuilderExtensionsAlias.Build(
                     a => a.ForType<Build>(
                         b => b.ForMethod(method,
                         c => c.UseCommandText(CommandText)
@@ -54,7 +53,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.NamespaceSett
         [Fact]
         public void AcceptsLastEntryFromBuilder()
         {
-            var result = B.Build(
+            var result = NamespaceSettingBuilderExtensionsAlias.Build(
                     a => a.ForType<Build>(
                         b => b.ForMethod(nameof(AcceptsLastEntryFromBuilder), c => c.UseCommandText(CommandText).UseConnectionAlias(Alias))
                               .ForMethod(nameof(AcceptsLastEntryFromBuilder), c => c.UseCommandText(CommandText).UseConnectionAlias(Alias))));
@@ -67,7 +66,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Tests.Unit.NamespaceSett
         [Fact]
         public void GroupsTypes()
         {
-            var result = B.Build(
+            var result = NamespaceSettingBuilderExtensionsAlias.Build(
                 x => x.ForType<Build>(
                     y => y.ForMethod(nameof(Successfully),
                         z => z.UseCommandText(CommandText)

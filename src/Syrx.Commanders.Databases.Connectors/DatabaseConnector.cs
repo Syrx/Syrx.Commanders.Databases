@@ -1,9 +1,8 @@
-﻿//  ============================================================================================================================= 
+//  ============================================================================================================================= 
 //  author       : david sexton (@sextondjc | sextondjc.com)
 //  date         : 2017.10.15 (17:58)
 //  licence      : This file is subject to the terms and conditions defined in file 'LICENSE.txt', which is part of this source code package.
 //  =============================================================================================================================
-using System.Collections.Concurrent;
 
 namespace Syrx.Commanders.Databases.Connectors
 {
@@ -21,9 +20,24 @@ namespace Syrx.Commanders.Databases.Connectors
     public class DatabaseConnector : IDatabaseConnector
     {
         private readonly Func<DbProviderFactory> _providerPredicate;
-        private readonly ICommanderSettings _settings;
+        private readonly Dictionary<string, ConnectionStringSetting> _connectionsByAlias = new(StringComparer.Ordinal);
         private readonly ConcurrentDictionary<string, ConnectionStringSetting> _connectionCache = new();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DatabaseConnector"/> class.
+        /// </summary>
+        /// <param name="settings">
+        /// The commander settings containing configured connection aliases and connection strings.
+        /// </param>
+        /// <param name="providerPredicate">
+        /// A delegate that returns the <see cref="DbProviderFactory"/> used to create database connections.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="settings"/> or <paramref name="providerPredicate"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when duplicate connection aliases are found in <paramref name="settings"/>.
+        /// </exception>
         public DatabaseConnector(
             ICommanderSettings settings,
             Func<DbProviderFactory> providerPredicate
@@ -32,7 +46,13 @@ namespace Syrx.Commanders.Databases.Connectors
             Throw<ArgumentNullException>(settings != null, nameof(settings));
             Throw<ArgumentNullException>(providerPredicate != null, nameof(providerPredicate));
 
-            _settings = settings!;
+            foreach (var connection in settings!.Connections ?? Enumerable.Empty<ConnectionStringSetting>())
+            {
+                Throw<ArgumentException>(
+                    _connectionsByAlias.TryAdd(connection.Alias, connection),
+                    $"Duplicate connection alias '{connection.Alias}' was found in settings.");
+            }
+
             _providerPredicate = providerPredicate!;
         }
 
@@ -45,7 +65,7 @@ namespace Syrx.Commanders.Databases.Connectors
         /// <returns>The cached or newly retrieved <see cref="ConnectionStringSetting"/>, or <c>null</c> if not found.</returns>
         private ConnectionStringSetting GetConnectionSetting(string connectionAlias) =>
             _connectionCache.GetOrAdd(connectionAlias, alias =>
-                _settings?.Connections?.SingleOrDefault(x => x.Alias == alias)!);
+                _connectionsByAlias.TryGetValue(alias, out var setting) ? setting : null!);
 
         /// <summary>
         /// Creates and returns a new <see cref="IDbConnection"/> configured with

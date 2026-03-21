@@ -1,16 +1,29 @@
 ﻿namespace Syrx.Commanders.Databases.Settings.Extensions
 {
+    /// <summary>
+    /// Builds a <see cref="NamespaceSetting"/> instance by collecting repository type command mappings.
+    /// </summary>
     public class NamespaceSettingBuilder
     {
         private string _namespace;
         private ConcurrentDictionary<string, TypeSetting> _types;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NamespaceSettingBuilder"/> class.
+        /// </summary>
         public NamespaceSettingBuilder()
         {
             _namespace = string.Empty;
             _types = new ConcurrentDictionary<string, TypeSetting>();
         }
 
+        /// <summary>
+        /// Adds command configuration for the specified repository type.
+        /// </summary>
+        /// <typeparam name="TType">The repository type to configure.</typeparam>
+        /// <param name="builder">The delegate that configures the type-specific command mappings.</param>
+        /// <returns>The current <see cref="NamespaceSettingBuilder"/> instance.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the repository type does not have a namespace or when <paramref name="builder"/> is <see langword="null"/>.</exception>
         public NamespaceSettingBuilder ForType<TType>(Action<TypeSettingBuilder<TType>> builder)
         {
             var type = typeof(TType);
@@ -26,6 +39,10 @@
             return this;
         }
 
+        /// <summary>
+        /// Merges the supplied type setting into the namespace definition.
+        /// </summary>
+        /// <param name="option">The type setting to merge.</param>
         public void Evaluate(TypeSetting option)
         {
             // pretty sure this can be done more elegantly. 

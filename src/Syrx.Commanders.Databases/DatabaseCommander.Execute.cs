@@ -5,8 +5,14 @@
 //  =============================================================================================================================
 namespace Syrx.Commanders.Databases
 {
+    /// <summary>
+    /// Partial declaration of <see cref="DatabaseCommander{TRepository}"/> containing synchronous command execution APIs.
+    /// </summary>
+    /// <typeparam name="TRepository">The repository type whose methods are resolved to configured database commands.</typeparam>
     public sealed partial class DatabaseCommander<TRepository>
     {
+    private static readonly string RepositoryTypeName = typeof(TRepository).FullName ?? typeof(TRepository).Name;
+
         /// <summary>
         /// Executes a command without parameters and returns a boolean indicating success.
         /// The command executed is automatically resolved based on the calling method name.
@@ -57,9 +63,18 @@ namespace Syrx.Commanders.Databases
                         transaction.Commit();
                         return result;
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        transaction.Rollback();
+                        try
+                        {
+                            transaction.Rollback();
+                        }
+                        catch (Exception rollbackEx)
+                        {
+                            TraceExecuteRollbackFailure(rollbackEx, setting, method, isAsync: false);
+                        }
+
+                        TraceExecuteFailure(ex, setting, method, isAsync: false);
                         throw;
                     }
                 }
@@ -79,6 +94,8 @@ namespace Syrx.Commanders.Databases
             TransactionScopeOption scopeOption = TransactionScopeOption.Suppress,
             [CallerMemberName] string method = null)
         {
+            Throw<ArgumentNullException>(map != null, nameof(map));
+
             // thought: should we support passing in the transaction scope option?
             //          i.e. let it be overridden by query definition?
             using (var scope = new TransactionScope(scopeOption))
@@ -87,6 +104,30 @@ namespace Syrx.Commanders.Databases
                 scope.Complete();
                 return result;
             }
+        }
+
+        private static void TraceExecuteFailure(Exception ex, CommandSetting setting, string method, bool isAsync)
+        {
+            System.Diagnostics.Trace.TraceError(
+                "event=database_execute_failure async={0} repository={1} method={2} alias={3} command_type={4} exception={5}",
+                isAsync,
+                RepositoryTypeName,
+                method,
+                setting?.ConnectionAlias,
+                setting?.CommandType,
+                ex.GetType().FullName);
+        }
+
+        private static void TraceExecuteRollbackFailure(Exception ex, CommandSetting setting, string method, bool isAsync)
+        {
+            System.Diagnostics.Trace.TraceError(
+                "event=database_execute_rollback_failure async={0} repository={1} method={2} alias={3} command_type={4} exception={5}",
+                isAsync,
+                RepositoryTypeName,
+                method,
+                setting?.ConnectionAlias,
+                setting?.CommandType,
+                ex.GetType().FullName);
         }
     }
 }

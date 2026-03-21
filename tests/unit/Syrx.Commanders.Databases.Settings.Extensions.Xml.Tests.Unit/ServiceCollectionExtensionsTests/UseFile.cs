@@ -1,7 +1,3 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Syrx.Extensions;
-using static Xunit.Assert;
 
 namespace Syrx.Commanders.Databases.Settings.Extensions.Xml.Tests.Unit.ServiceCollectionExtensionsTests
 {
@@ -11,7 +7,7 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Xml.Tests.Unit.ServiceCo
         [Fact]
         public void UseFileOverload()
         {
-            var fileName = $"syrx.settings.file-overload.{DateTime.UtcNow.ToString("yyMMddHH")}.json";
+            var fileName = $"syrx.settings.file-overload.{DateTime.UtcNow.ToString("yyMMddHH")}.xml";
             var services = fixture.Services;
             var builder = fixture.ConfigurationBuilder;
 
@@ -29,6 +25,16 @@ namespace Syrx.Commanders.Databases.Settings.Extensions.Xml.Tests.Unit.ServiceCo
             NotNull(resolved);
 
             Equivalent(settings, resolved);
+        }
+
+        [Fact]
+        public void UseFileRejectsPathTraversalFileName()
+        {
+            var services = fixture.Services;
+            var builder = fixture.ConfigurationBuilder;
+            var result = Throws<ArgumentException>(() => services.UseSyrx(a => a.UseFile("..\\settings.xml", builder)));
+
+            Contains("not an approved XML settings file name", result.Message);
         }
 
 

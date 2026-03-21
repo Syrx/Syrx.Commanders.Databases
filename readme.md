@@ -9,6 +9,21 @@ This repository hosts code that is common to all RDBMS implementations as well a
 - **Fully thread-safe** - all components can be safely used concurrently
 - Built on top of Dapper for high performance
 
+## Documentation Metrics
+
+Use the repository script to measure documentation coverage objectively:
+
+```powershell
+./scripts/Get-DocumentationMetrics.ps1 -MinimumScore 85 -EnforceMinimum -OutputJsonPath ./.docs/reports/documentation-metrics.json
+```
+
+The score is weighted as follows:
+
+- Public XML documentation coverage: 80%
+- Project README coverage: 20%
+
+This command is also enforced in CI through the `publish` workflow.
+
 What follows is a brief overview of each of the projects within this repository.
 
 ## Table of Contents 

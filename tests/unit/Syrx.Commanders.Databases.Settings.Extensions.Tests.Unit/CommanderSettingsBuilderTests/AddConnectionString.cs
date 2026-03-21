@@ -46,6 +46,21 @@
             Equal(Alias, result.Connections.Single().Alias);
             Equal(ConnectionString, result.Connections.Single().ConnectionString);
         }
+
+        [Fact]
+        public void DifferentConnectionStringsSameAliasThrowsArgumentExceptionWithoutLeakingSecrets()
+        {
+            const string otherConnectionString = "different-test-connection-string";
+
+            var result = Throws<ArgumentException>(() => CommanderSettingsBuilderExtensions.Build(a => a
+                .AddConnectionString(Alias, ConnectionString)
+                .AddConnectionString(Alias, otherConnectionString)
+                .AddTestCommand()));
+
+            Contains(Alias, result.Message);
+            DoesNotContain(ConnectionString, result.Message);
+            DoesNotContain(otherConnectionString, result.Message);
+        }
     }
 
     

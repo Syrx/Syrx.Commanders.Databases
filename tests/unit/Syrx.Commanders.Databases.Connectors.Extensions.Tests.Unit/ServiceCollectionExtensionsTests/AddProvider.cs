@@ -1,8 +1,3 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Moq;
-using Syrx.Commanders.Databases.Tests.Extensions;
-using System.Data.Common;
-using static Xunit.Assert;
 
 namespace Syrx.Commanders.Databases.Connectors.Extensions.Tests.Unit.ServiceCollectionExtensionsTests
 {

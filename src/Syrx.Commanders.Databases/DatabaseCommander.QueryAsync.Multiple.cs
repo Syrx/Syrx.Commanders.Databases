@@ -1,17 +1,29 @@
-﻿//  ============================================================================================================================= 
+//  ============================================================================================================================= 
 //  author       : david sexton (@sextondjc | sextondjc.com)
 //  date         : 2017.10.15 (17:58)
 //  licence      : This file is subject to the terms and conditions defined in file 'LICENSE.txt', which is part of this source code package.
 //  =============================================================================================================================
 
-using System.Collections;
-using System.Linq;
-using System.Reflection;
 
 namespace Syrx.Commanders.Databases
 {
+    /// <summary>
+    /// Partial declaration of <see cref="DatabaseCommander{TRepository}"/> containing asynchronous multi-result query APIs.
+    /// </summary>
+    /// <typeparam name="TRepository">The repository type whose methods are resolved to configured database commands.</typeparam>
     public sealed partial class DatabaseCommander<TRepository> //: ICommander
     {
+        private static readonly MethodInfo GridReadAsyncMethodDefinition = typeof(SqlMapper.GridReader).GetMethods()
+            .Single(m =>
+                m.Name == "ReadAsync" &&
+                m.IsGenericMethodDefinition &&
+                m.GetParameters().Length == 1 &&
+                m.GetParameters()[0].ParameterType == typeof(bool));
+
+        private static readonly MethodInfo EmptyMethodDefinitionAsync = typeof(Enumerable).GetMethod(nameof(Enumerable.Empty))!;
+        private static readonly ConcurrentDictionary<Type, MethodInfo> GridReadAsyncMethods = new();
+        private static readonly ConcurrentDictionary<Type, MethodInfo> EmptyMethodsAsync = new();
+
         /// <summary>
         /// Asynchronously executes a multiple result set query using one type, combining the result sets with a mapping function to produce the final result.
         /// </summary>
@@ -486,10 +498,7 @@ namespace Syrx.Commanders.Databases
                 var actualResults = new object[16];
                 for (int i = 0; i < actualTypeCount; i++)
                 {
-                    var readMethod = typeof(SqlMapper.GridReader).GetMethods()
-                        .Where(m => m.Name == "ReadAsync" && m.IsGenericMethodDefinition && m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType == typeof(bool))
-                        .Single()
-                        .MakeGenericMethod(types[i]);
+                    var readMethod = GridReadAsyncMethods.GetOrAdd(types[i], type => GridReadAsyncMethodDefinition.MakeGenericMethod(type));
                     var taskResult = (Task)readMethod.Invoke(reader, new object[] { true })!;
                     await taskResult;
                     var resultProperty = taskResult.GetType().GetProperty("Result")!;
@@ -499,7 +508,7 @@ namespace Syrx.Commanders.Databases
                 // Create properly typed empty enumerables for ignored types
                 for (int i = actualTypeCount; i < 16; i++)
                 {
-                    var emptyMethod = typeof(Enumerable).GetMethod("Empty")!.MakeGenericMethod(types[i]);
+                    var emptyMethod = EmptyMethodsAsync.GetOrAdd(types[i], type => EmptyMethodDefinitionAsync.MakeGenericMethod(type));
                     actualResults[i] = emptyMethod.Invoke(null, null)!;
                 }
                 

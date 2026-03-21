@@ -1,16 +1,10 @@
-﻿//  ============================================================================================================================= 
+//  ============================================================================================================================= 
 //  author       : david sexton (@sextondjc | sextondjc.com)
 //  date         : 2017.10.15 (17:59)
 //  modified     : 2017.10.15 (22:43)
 //  licence      : This file is subject to the terms and conditions defined in file 'LICENSE.txt', which is part of this source code package.
 //  =============================================================================================================================
 
-using Moq;
-using Syrx.Commanders.Databases.Settings;
-using Syrx.Commanders.Databases.Settings.Extensions;
-using Syrx.Commanders.Databases.Tests.Extensions;
-using System.Data.Common;
-using static Xunit.Assert;
 
 namespace Syrx.Commanders.Databases.Connectors.Tests.Unit.DatabaseConnectorTests
 {

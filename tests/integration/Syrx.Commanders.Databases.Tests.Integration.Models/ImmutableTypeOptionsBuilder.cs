@@ -1,4 +1,3 @@
-﻿using Syrx.Commanders.Databases.Tests.Integration.Models.Immutable;
 
 namespace Syrx.Commanders.Databases.Tests.Integration.Models
 {

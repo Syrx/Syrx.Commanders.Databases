@@ -1,13 +1,16 @@
-﻿//  ============================================================================================================================= 
+//  ============================================================================================================================= 
 //  author       : david sexton (@sextondjc | sextondjc.com)
 //  date         : 2017.10.15 (17:58)
 //  licence      : This file is subject to the terms and conditions defined in file 'LICENSE.txt', which is part of this source code package.
 //  =============================================================================================================================
 
-using System.Linq;
 
 namespace Syrx.Commanders.Databases
 {
+    /// <summary>
+    /// Partial declaration of <see cref="DatabaseCommander{TRepository}"/> containing asynchronous multi-mapping query APIs.
+    /// </summary>
+    /// <typeparam name="TRepository">The repository type whose methods are resolved to configured database commands.</typeparam>
     public sealed partial class DatabaseCommander<TRepository> //: ICommander
     {
         /// <summary>
@@ -27,7 +30,7 @@ namespace Syrx.Commanders.Databases
         {
             var setting = GetCommandSetting(method);
             var command = GetCommandDefinition(setting, parameters, cancellationToken: cancellationToken);
-            var connection = _connector.CreateConnection(setting);
+            using var connection = _connector.CreateConnection(setting);
             return await connection.QueryAsync<TResult>(command);
         }
 
