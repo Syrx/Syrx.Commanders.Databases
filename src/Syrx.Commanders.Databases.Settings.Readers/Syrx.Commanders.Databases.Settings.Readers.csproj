@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<Description>This package adds support for reading settings for Database Commanders from configuration sources.</Description>
 		<PackageTags>syrx;data access;orm;micro-orm</PackageTags>
@@ -20,11 +20,7 @@
 
 
 	<ItemGroup>
-	  <PackageReference Include="Syrx.Analyzers.Usings" Version="1.1.1">
-	    <PrivateAssets>all</PrivateAssets>
-	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-	</ItemGroup>
+</ItemGroup>
 
 
 	<ItemGroup>

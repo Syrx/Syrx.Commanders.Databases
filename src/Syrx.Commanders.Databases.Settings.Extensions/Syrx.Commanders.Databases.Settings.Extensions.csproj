@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<Description>This package hosts extension methods to simplify the configuration of Syrx database commands. </Description>
 		<PackageTags>syrx;data access;orm;micro-orm</PackageTags>
@@ -18,11 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Syrx.Analyzers.Usings" Version="1.1.1">
-	    <PrivateAssets>all</PrivateAssets>
-	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-	</ItemGroup>
+</ItemGroup>
 
 	<ItemGroup>
 	  <PackageReference Update="DotNet.ReproducibleBuilds" Version="2.0.2" />
