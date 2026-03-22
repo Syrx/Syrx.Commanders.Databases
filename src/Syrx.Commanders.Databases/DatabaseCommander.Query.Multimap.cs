@@ -457,7 +457,7 @@ namespace Syrx.Commanders.Databases
         /// <remarks>
         /// This method automatically detects the number of types to be mapped by identifying <see cref="Ignore"/> placeholder types.
         /// When <see cref="Ignore"/> types are encountered, they are excluded from the type array passed to the underlying Dapper query.
-        /// This allows for flexible multimap queries without requiring separate implementations for each type count.
+        /// Cached generic type-shape metadata avoids rebuilding the type array on each call.
         /// </remarks>
         public IEnumerable<TResult> Query<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TResult>(
             Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TResult> map,
@@ -466,40 +466,27 @@ namespace Syrx.Commanders.Databases
         {
             var setting = GetCommandSetting(method);
             var command = GetCommandDefinition(setting, parameters);
-
-            // Build the types array, excluding unused object placeholders
-            var allTypes = new Type[]
-            {
-                typeof(T1), typeof(T2), typeof(T3), typeof(T4),
-                typeof(T5), typeof(T6), typeof(T7), typeof(T8),
-                typeof(T9), typeof(T10), typeof(T11), typeof(T12),
-                typeof(T13), typeof(T14), typeof(T15), typeof(T16)
-            };
-            
-            var types = allTypes.TakeWhile(t => t != typeof(Ignore)).ToArray();
-            if (types.Length == 0 || types.Length > 16)
-            {
-                types = allTypes; // Fallback to all types if no Ignore placeholders or edge case
-            }
+            var count = MultimapTypeShape<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>.Count;
+            var types = MultimapTypeShape<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>.Types;
 
             Func<object[], TResult> internalMapper = (a) =>
             {
-                var one = types.Length > 0 ? (T1)a[0] : default(T1)!;
-                var two = types.Length > 1 ? (T2)a[1] : default(T2)!;
-                var three = types.Length > 2 ? (T3)a[2] : default(T3)!;
-                var four = types.Length > 3 ? (T4)a[3] : default(T4)!;
-                var five = types.Length > 4 ? (T5)a[4] : default(T5)!;
-                var six = types.Length > 5 ? (T6)a[5] : default(T6)!;
-                var seven = types.Length > 6 ? (T7)a[6] : default(T7)!;
-                var eight = types.Length > 7 ? (T8)a[7] : default(T8)!;
-                var nine = types.Length > 8 ? (T9)a[8] : default(T9)!;
-                var ten = types.Length > 9 ? (T10)a[9] : default(T10)!;
-                var eleven = types.Length > 10 ? (T11)a[10] : default(T11)!;
-                var twelve = types.Length > 11 ? (T12)a[11] : default(T12)!;
-                var thirteen = types.Length > 12 ? (T13)a[12] : default(T13)!;
-                var fourteen = types.Length > 13 ? (T14)a[13] : default(T14)!;
-                var fifteen = types.Length > 14 ? (T15)a[14] : default(T15)!;
-                var sixteen = types.Length > 15 ? (T16)a[15] : default(T16)!;
+                var one = count > 0 ? (T1)a[0] : default(T1)!;
+                var two = count > 1 ? (T2)a[1] : default(T2)!;
+                var three = count > 2 ? (T3)a[2] : default(T3)!;
+                var four = count > 3 ? (T4)a[3] : default(T4)!;
+                var five = count > 4 ? (T5)a[4] : default(T5)!;
+                var six = count > 5 ? (T6)a[5] : default(T6)!;
+                var seven = count > 6 ? (T7)a[6] : default(T7)!;
+                var eight = count > 7 ? (T8)a[7] : default(T8)!;
+                var nine = count > 8 ? (T9)a[8] : default(T9)!;
+                var ten = count > 9 ? (T10)a[9] : default(T10)!;
+                var eleven = count > 10 ? (T11)a[10] : default(T11)!;
+                var twelve = count > 11 ? (T12)a[11] : default(T12)!;
+                var thirteen = count > 12 ? (T13)a[12] : default(T13)!;
+                var fourteen = count > 13 ? (T14)a[13] : default(T14)!;
+                var fifteen = count > 14 ? (T15)a[14] : default(T15)!;
+                var sixteen = count > 15 ? (T16)a[15] : default(T16)!;
 
                 return map(one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen, fourteen, fifteen, sixteen);
             };
