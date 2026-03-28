@@ -106,3 +106,4 @@ This checklist captures the decisions maintainers must make before the gated rem
 ## implementation validation note
 
 - GH-002 currently uses equivalent unit regression coverage for acceptance because the integration suite in this repository snapshot is abstract-only and discovers zero runnable tests without concrete derived fixtures.
+

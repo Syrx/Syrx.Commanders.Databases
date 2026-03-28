@@ -1,6 +1,7 @@
 ---
 name: syrx-validation
 agent: agent
+tools: ['changes', 'search/codebase', 'edit/editFiles', 'problems', 'search']
 description: 'Prompt for applying Syrx guard validation patterns consistently.'
 ---
 

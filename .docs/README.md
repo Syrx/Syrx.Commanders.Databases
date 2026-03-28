@@ -24,10 +24,10 @@ The Syrx framework follows a layered architecture that separates concerns betwee
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Application Layer                        │
-│  ┌─────────────────┐    ┌─────────────────┐               │
-│  │   Repository    │    │   Repository    │   ...         │
-│  │     Class       │    │     Class       │               │
-│  └─────────────────┘    └─────────────────┘               │
+│  ┌─────────────────┐    ┌─────────────────┐                 │
+│  │   Repository    │    │   Repository    │   ...           │
+│  │     Class       │    │     Class       │                 │
+│  └─────────────────┘    └─────────────────┘                 │
 └─────────────────┬───────────────┬───────────────────────────┘
                   │               │
                   ▼               ▼
@@ -36,28 +36,28 @@ The Syrx framework follows a layered architecture that separates concerns betwee
 │  ┌─────────────────────────────────────────────────────────┐│
 │  │           ICommander<TRepository>                       ││
 │  │                                                         ││
-│  │  ┌─────────────────────────────────────────────────────┤│
-│  │  │       DatabaseCommander<TRepository>                ││
-│  │  └─────────────────────────────────────────────────────┘│
+│  │  ┌─────────────────────────────────────────────────────┐││
+│  │  │       DatabaseCommander<TRepository>                │││
+│  │  └─────────────────────────────────────────────────────┘││
 │  └─────────────────────────────────────────────────────────┘│
 └─────────────────┬───────────────┬───────────────────────────┘
                   │               │
                   ▼               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │              Configuration Layer                            │
-│  ┌──────────────────┐    ┌──────────────────┐             │
-│  │ Command Settings │    │ Connection       │             │
-│  │    Resolution    │    │   Management     │             │
-│  └──────────────────┘    └──────────────────┘             │
+│  ┌──────────────────┐    ┌──────────────────┐               │
+│  │ Command Settings │    │ Connection       │               │
+│  │    Resolution    │    │   Management     │               │
+│  └──────────────────┘    └──────────────────┘               │
 └─────────────────┬───────────────┬───────────────────────────┘
                   │               │
                   ▼               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                Database Layer                               │
-│  ┌──────────────────┐    ┌──────────────────┐             │
-│  │     Dapper       │    │  ADO.NET         │             │
-│  │   (Micro-ORM)    │    │ Connections      │             │
-│  └──────────────────┘    └──────────────────┘             │
+│  ┌──────────────────┐    ┌──────────────────┐               │
+│  │     Dapper       │    │  ADO.NET         │               │
+│  │   (Micro-ORM)    │    │ Connections      │               │
+│  └──────────────────┘    └──────────────────┘               │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -86,9 +86,9 @@ public class UserRepository
     }
     
     // Method name automatically maps to configured command
-    public async Task<User> GetByIdAsync(int id)
+    public async Task<User> RetrieveAsync(int id, CancellationToken cancellationToken = default)
     {
-        var users = await _commander.QueryAsync<User>(new { id });
+      var users = await _commander.QueryAsync<User>(new { id }, cancellationToken);
         return users.FirstOrDefault();
     }
 }
@@ -100,8 +100,8 @@ Commands are resolved using the pattern: `{Namespace}.{ClassName}.{MethodName}`
 For the example above:
 - **Namespace**: `MyApp.Repositories`
 - **Class**: `UserRepository` 
-- **Method**: `GetByIdAsync`
-- **Resolved Command**: `MyApp.Repositories.UserRepository.GetByIdAsync`
+- **Method**: `RetrieveAsync`
+- **Resolved Command**: `MyApp.Repositories.UserRepository.RetrieveAsync`
 
 ### Connection Management
 Named connection strings are resolved by alias, enabling environment-specific configuration:
@@ -148,9 +148,9 @@ The Syrx.Commanders.Databases ecosystem consists of several interconnected packa
 
 | Package | Purpose | Configuration Format |
 |---------|---------|---------------------|
-| **[Syrx.Commanders.Databases.Settings.Extensions](../src/Syrx.Commanders.Databases.Settings.Extensions/README.md)** | Builder pattern APIs | Programmatic |
-| **[Syrx.Commanders.Databases.Settings.Extensions.Json](../src/Syrx.Commanders.Databases.Settings.Extensions.Json/README.md)** | JSON configuration | JSON files |
-| **[Syrx.Commanders.Databases.Settings.Extensions.Xml](../src/Syrx.Commanders.Databases.Settings.Extensions.Xml/README.md)** | XML configuration | XML files |
+| **[Syrx.Commanders.Databases.Settings.Extensions](../src/Syrx.Commanders.Databases.Settings.Extensions/README.md)** | Recommended builder pattern APIs | Programmatic |
+| **[Syrx.Commanders.Databases.Settings.Extensions.Json](../src/Syrx.Commanders.Databases.Settings.Extensions.Json/README.md)** | Optional JSON configuration loader | JSON files |
+| **[Syrx.Commanders.Databases.Settings.Extensions.Xml](../src/Syrx.Commanders.Databases.Settings.Extensions.Xml/README.md)** | Optional XML configuration loader | XML files |
 
 ### Utility Packages
 
@@ -164,14 +164,18 @@ The Syrx.Commanders.Databases ecosystem consists of several interconnected packa
 
 ### 1. Installation
 
-Install the core package and a configuration provider:
+Install the core package and the recommended builder configuration package:
 
 ```bash
 # Core framework
 dotnet add package Syrx.Commanders.Databases
 
-# JSON configuration support
+# Recommended: builder-based configuration
+dotnet add package Syrx.Commanders.Databases.Settings.Extensions
+
+# Optional: file-based configuration loaders
 dotnet add package Syrx.Commanders.Databases.Settings.Extensions.Json
+dotnet add package Syrx.Commanders.Databases.Settings.Extensions.Xml
 
 # Service registration extensions
 dotnet add package Syrx.Commanders.Databases.Extensions
@@ -179,7 +183,23 @@ dotnet add package Syrx.Commanders.Databases.Extensions
 
 ### 2. Configuration
 
-Create a `syrx.json` configuration file:
+Create configuration with the fluent builder API:
+
+```csharp
+var settings = new CommanderSettingsBuilder()
+  .AddConnectionString("DefaultConnection", connectionString)
+  .AddNamespace("MyApp.Repositories", ns => ns
+    .AddType("UserRepository", type => type
+      .AddCommand("RetrieveAsync", cmd => cmd
+        .UseCommandText("SELECT * FROM Users WHERE Id = @id")
+        .UseConnectionAlias("DefaultConnection"))
+      .AddCommand("CreateAsync", cmd => cmd
+        .UseCommandText("INSERT INTO Users (Name, Email) VALUES (@Name, @Email)")
+        .UseConnectionAlias("DefaultConnection"))))
+  .Build();
+```
+
+Optional JSON file equivalent:
 
 ```json
 {
@@ -196,11 +216,11 @@ Create a `syrx.json` configuration file:
         {
           "Name": "UserRepository",
           "Commands": {
-            "GetByIdAsync": {
+            "RetrieveAsync": {
               "CommandText": "SELECT * FROM Users WHERE Id = @id",
               "ConnectionAlias": "DefaultConnection"
             },
-            "CreateUserAsync": {
+            "CreateAsync": {
               "CommandText": "INSERT INTO Users (Name, Email) VALUES (@Name, @Email)",
               "ConnectionAlias": "DefaultConnection"
             }
@@ -219,11 +239,13 @@ Register services in your DI container:
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
-    var configBuilder = new ConfigurationBuilder();
-    
-    // Register Syrx with JSON configuration
-    services.UseSyrx(builder => builder
-        .UseFile("syrx.json", configBuilder));
+  // Recommended: register builder-composed settings
+  services.AddSingleton<ICommanderSettings>(settings);
+  services.UseSyrx(_ => { });
+
+  // Optional file-based registration
+  // var configBuilder = new ConfigurationBuilder();
+  // services.UseSyrx(builder => builder.UseFile("syrx.json", configBuilder));
     
     // Register your repositories
     services.AddScoped<UserRepository>();
@@ -244,15 +266,15 @@ public class UserRepository
         _commander = commander;
     }
     
-    public async Task<User> GetByIdAsync(int id)
+    public async Task<User> RetrieveAsync(int id, CancellationToken cancellationToken = default)
     {
-        var users = await _commander.QueryAsync<User>(new { id });
+      var users = await _commander.QueryAsync<User>(new { id }, cancellationToken);
         return users.FirstOrDefault();
     }
     
-    public async Task<User> CreateUserAsync(User user)
+    public async Task<User> CreateUserAsync(User user, CancellationToken cancellationToken = default)
     {
-        return await _commander.ExecuteAsync(user) ? user : null;
+      return await _commander.ExecuteAsync(user, cancellationToken) ? user : null;
     }
 }
 ```
@@ -306,7 +328,7 @@ var settings = new CommanderSettingsBuilder()
     .AddConnectionString("Default", connectionString)
     .AddNamespace("MyApp.Repositories", ns => ns
         .AddType("UserRepository", type => type
-            .AddCommand("GetByIdAsync", cmd => cmd
+            .AddCommand("RetrieveAsync", cmd => cmd
                 .UseCommandText("SELECT * FROM Users WHERE Id = @id")
                 .UseConnectionAlias("Default"))))
     .Build();
@@ -373,14 +395,15 @@ Handle complex object relationships:
 
 ```csharp
 // Two-table join
-public async Task<IEnumerable<User>> GetUsersWithProfilesAsync()
+public async Task<IEnumerable<User>> RetrieveWithProfilesAsync(CancellationToken cancellationToken = default)
 {
     return await _commander.QueryAsync<User, Profile, User>(
         (user, profile) => 
         {
             user.Profile = profile;
             return user;
-        });
+    },
+    cancellationToken: cancellationToken);
 }
 
 // Configure split column in settings
@@ -394,10 +417,10 @@ public async Task<IEnumerable<User>> GetUsersWithProfilesAsync()
 Process stored procedures returning multiple result sets:
 
 ```csharp
-public async Task<DashboardData> GetDashboardAsync(int userId)
+public async Task<DashboardData> RetrieveDashboardAsync(int userId, CancellationToken cancellationToken = default)
 {
     var (users, orders, notifications) = await _commander
-        .QueryMultipleAsync<User, Order, Notification>(new { userId });
+  .QueryMultipleAsync<User, Order, Notification>(new { userId });
     
     return new DashboardData
     {
@@ -429,7 +452,7 @@ public async Task<DashboardData> GetDashboardAsync(int userId)
 ```csharp
 // Use different connections for different operations
 {
-  "GetUsersAsync": {
+  "RetrieveUsersAsync": {
     "ConnectionAlias": "ReadOnly"
   },
   "CreateUserAsync": {
@@ -454,7 +477,7 @@ public async Task<DashboardData> GetDashboardAsync(int userId)
 #### Table Direct Access
 ```json
 {
-  "GetUserTableAsync": {
+  "RetrieveUserTableAsync": {
     "CommandText": "Users",
     "CommandType": "TableDirect"
   }
@@ -528,13 +551,13 @@ public async Task<DashboardData> GetDashboardAsync(int userId)
 #### From Entity Framework
 ```csharp
 // Entity Framework
-public async Task<User> GetUserAsync(int id)
+public async Task<User> RetrieveUserAsync(int id)
 {
     return await _context.Users.FindAsync(id);
 }
 
 // Syrx
-public async Task<User> GetUserAsync(int id)
+public async Task<User> RetrieveUserAsync(int id)
 {
     var users = await _commander.QueryAsync<User>(new { id });
     return users.FirstOrDefault();
@@ -544,7 +567,7 @@ public async Task<User> GetUserAsync(int id)
 #### From Raw ADO.NET
 ```csharp
 // Raw ADO.NET
-public async Task<User> GetUserAsync(int id)
+public async Task<User> RetrieveUserAsync(int id)
 {
     using var connection = new SqlConnection(connectionString);
     using var command = new SqlCommand("SELECT * FROM Users WHERE Id = @id", connection);
@@ -553,7 +576,7 @@ public async Task<User> GetUserAsync(int id)
 }
 
 // Syrx
-public async Task<User> GetUserAsync(int id)
+public async Task<User> RetrieveUserAsync(int id)
 {
     var users = await _commander.QueryAsync<User>(new { id });
     return users.FirstOrDefault();
@@ -608,3 +631,6 @@ See the [Contributing Guide](../CONTRIBUTING.md) for information about:
 ## License
 
 This project is licensed under the [MIT License](../LICENSE).
+
+
+

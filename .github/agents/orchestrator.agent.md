@@ -96,9 +96,7 @@ When acting as orchestrator:
 - Keep planning in `.docs/research` and `.docs/plans`.
 - Keep security research reports in `.docs/research/security` and performance research reports in `.docs/research/performance` unless the user or workspace documentation specialist overrides the location.
 - Keep ADRs in `.docs/adr`.
-- Use Syrx only for .NET data access.
-- Use xUnit and Moq only for tests; FluentAssertions is banned.
-- Use the latest stable C# version supported by the target framework.
+- Enforce specialist lane boundaries: researchers do not implement, planners do not write code, implementers do not drift into research-only analysis.
 
 ## Escalation Rules
 

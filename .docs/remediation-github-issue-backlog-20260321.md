@@ -282,3 +282,4 @@ Validation note (2026-03-21):
 - GH-001 through GH-005 are the best first wave if you want immediate risk reduction.
 - GH-006 should not be opened as implementation-ready unless AG-002 is answered in the same planning cycle.
 - GH-007 through GH-010 are backlog-ready but intentionally gated to prevent speculative refactors.
+

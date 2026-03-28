@@ -86,7 +86,7 @@ You MUST execute comprehensive research using these tools and immediately docume
 You WILL conduct thorough internal project research by:
 - Using `file_search`, `semantic_search`, and `read_file` to analyze project files, structure, and implementation conventions
 - Using `grep_search` to find specific implementations, configurations, and coding conventions
-- Using `vscode_listCodeUsages` to understand how patterns are applied across the codebase
+- Using `list_code_usages` to understand how patterns are applied across the codebase
 - Executing read operations to analyze complete files for standards and conventions
 - Referencing `.github/instructions/` for established guidelines
 

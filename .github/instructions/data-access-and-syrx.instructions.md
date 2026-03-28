@@ -21,7 +21,7 @@ Centralize all SQL. Explicit column lists; soft deletes preferred.
 
 ### Structure & Naming
 - One static partial class per aggregate: `public static partial class CommandStrings { public static class Order { ... } }`
-- Verb + Target pattern: `GetById`, `Insert`, `UpdateStatus`, `SoftDelete`.
+- Verb + Target pattern: `RetrieveById`, `Create`, `UpdateStatus`, `Delete`.
 - No string interpolation; parameter tokens only (e.g., `@Id`).
 
 ### Example
@@ -30,9 +30,9 @@ public static partial class CommandStrings
 {
 	public static class Order
 	{
-		public const string GetById = "SELECT Id, CustomerId, Status, Version FROM dbo.Orders WHERE Id = @Id AND IsDeleted = 0";
+        public const string RetrieveById = "SELECT Id, CustomerId, Status, Version FROM dbo.Orders WHERE Id = @Id AND IsDeleted = 0";
 		public const string Upsert = "MERGE dbo.Orders AS tgt USING (SELECT @Id AS Id) AS src ON tgt.Id = src.Id WHEN MATCHED THEN UPDATE SET CustomerId=@CustomerId, Status=@Status, Version=Version+1 WHEN NOT MATCHED THEN INSERT (Id, CustomerId, Status, Version) VALUES (@Id, @CustomerId, @Status, 0);";
-		public const string SoftDelete = "UPDATE dbo.Orders SET IsDeleted = 1, Version = Version + 1 WHERE Id = @Id";
+        public const string Delete = "UPDATE dbo.Orders SET IsDeleted = 1, Version = Version + 1 WHERE Id = @Id";
 		public const string ListPaged = "SELECT Id, CustomerId, Status, Version FROM dbo.Orders WHERE IsDeleted=0 ORDER BY CreatedOn DESC OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
 	}
 }
@@ -49,10 +49,10 @@ Use global `using static Syrx.Validation.Contract;` in project.
 
 ### Example Guard in Repository
 ```csharp
-public async Task<Order?> GetAsync(Guid id, CancellationToken ct)
+public async Task<Order?> RetrieveAsync(Guid id, CancellationToken ct)
 {
 	Throw<ArgumentOutOfRangeException>(id != Guid.Empty, "Id required");
-	var data = await _commander.QueryAsync<OrderData>(CommandStrings.Order.GetById, new { Id = id }, ct);
+    var data = await _commander.QueryAsync<OrderData>(CommandStrings.Order.RetrieveById, new { Id = id }, ct);
 	return data?.ToDomain();
 }
 ```
@@ -86,7 +86,7 @@ WHERE o.Id = @Id AND o.IsDeleted = 0;
 
 **Repository (using multi-map signature with Func<T1, T2, TResult>):**
 ```csharp
-public async Task<Order?> GetOrderWithLinesAsync(Guid id, CancellationToken ct)
+public async Task<Order?> RetrieveOrderWithLinesAsync(Guid id, CancellationToken ct)
 {
     var orders = await _commander.QueryAsync<Order, OrderLine, Order>(
         (order, line) =>
@@ -124,7 +124,7 @@ SELECT Id, OrderId, ProductId, Quantity, UnitPrice FROM dbo.OrderLines WHERE Ord
 
 **Repository (using Func<IEnumerable<T1>, IEnumerable<T2>, IEnumerable<TResult>>):**
 ```csharp
-public async Task<Order?> GetOrderWithLinesMultiAsync(Guid id, CancellationToken ct)
+public async Task<Order?> RetrieveOrderWithLinesMultiAsync(Guid id, CancellationToken ct)
 {
     var results = await _commander.QueryAsync<OrderData, OrderLineData, Order>(
         (orders, lines) =>
@@ -182,7 +182,7 @@ public static class OrderMaterializer
 ```json
 {
   "Commands": {
-    "GetOrderWithLinesAsync": {
+        "RetrieveOrderWithLinesAsync": {
       "CommandText": "SELECT o.Id, o.CustomerId, o.Status, o.Version, l.Id, l.ProductId, l.Quantity, l.UnitPrice FROM dbo.Orders o LEFT JOIN dbo.OrderLines l ON l.OrderId = o.Id WHERE o.Id = @Id",
       "ConnectionAlias": "Default",
       "SplitOn": "Id"
@@ -233,14 +233,14 @@ namespace Samples.Repositories.OrderRepositoryTests
         }
     }
 
-    public class GetAsync(OrderRepositoryTestsFixture fixture)
+    public class RetrieveAsync(OrderRepositoryTestsFixture fixture)
     {
         private readonly IOrderRepository _repository = fixture.Repository;
 
         [Fact]
         public async Task ReturnsNullWhenNotFound()
         {
-            var result = await _repository.GetAsync(Guid.NewGuid());
+            var result = await _repository.RetrieveAsync(Guid.NewGuid());
             Null(result);
         }
     }
@@ -253,7 +253,7 @@ namespace Samples.Repositories.OrderRepositoryTests
 - Validate SQL plan regression only for critical queries (capture execution statistics).
 
 ### Test Naming Pattern
-`GetByIdReturnsNullWhenMissing`, `UpsertIncrementsVersionOnUpdate`.
+`RetrieveByIdReturnsNullWhenMissing`, `UpsertIncrementsVersionOnUpdate`.
 
 ### Anti-Patterns (Avoid)
 | Anti-Pattern | Risk | Replacement |
@@ -268,7 +268,7 @@ namespace Samples.Repositories.OrderRepositoryTests
 Application service coordinates units of work.
 ```csharp
 using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-await orderRepository.SaveAsync(order, ct);
+await orderRepository.UpsertAsync(order, ct);
 // publish events after commit
 scope.Complete();
 ```

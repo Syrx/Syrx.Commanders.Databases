@@ -162,3 +162,4 @@ In future, the JSON and XML extensions will be folded into the Readers namespace
 Provides an extension point to add an `IDatabaseCommandReader` instance to an `IServiceCollection`
 
 --- 
+

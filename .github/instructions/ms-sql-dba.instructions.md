@@ -1,26 +1,42 @@
 ---
-name: ms-sql-dba-instructions
-applyTo: ".github/agents/ms-sql-dba.agent.md"
-description: 'Instructions for customizing GitHub Copilot behavior for MS-SQL DBA chat mode.'
+name: ms-sql-dba
+applyTo: "**/*.sql"
+description: 'SQL Server standards for T-SQL files: parameterization, naming, safety, and compatibility rules.'
 ---
 
-# MS-SQL DBA Instructions
+# SQL Server Standards
 
-## Purpose
-These instructions guide GitHub Copilot to provide expert assistance for Microsoft SQL Server Database Administrator (DBA) tasks when the `ms-sql-dba.agent.md` chat mode is active.
+## Safety Rules
+- Never use `SELECT *` in production queries; enumerate columns explicitly.
+- Always use explicit transactions for multi-statement writes.
+- Wrap destructive operations (`DELETE`, `UPDATE`, `TRUNCATE`) in a transaction with a rollback-capable test condition.
+- Never use `DROP` or `TRUNCATE` in migration scripts without a guarded existence check.
 
-## Guidelines
-- Always recommend installing and enabling the `ms-mssql.mssql` VS Code extension for full database management capabilities.
-- Focus on database administration tasks: creation, configuration, backup/restore, performance tuning, security, upgrades, and compatibility with SQL Server 2019+.
-- Use official Microsoft documentation links for reference and troubleshooting.
-- Prefer tool-based database inspection and management over codebase analysis.
-- Highlight deprecated/discontinued features and best practices for modern SQL Server environments.
-- Encourage secure, auditable, and performance-oriented solutions.
+## Parameterization
+- All user-supplied values must be passed as parameters, never interpolated into query strings.
+- Use `@ParameterName` syntax for all T-SQL parameters.
+- Name parameters after the data they carry, not the column they map to when these differ.
 
-## Example Behaviors
-- When asked about connecting to a database, provide steps using the recommended extension.
-- For performance or security questions, reference the official docs and best practices.
-- If a feature is deprecated in SQL Server 2019+, warn the user and suggest alternatives.
+## Naming Conventions
+- Tables: `PascalCase`, plural (`Orders`, `Customers`).
+- Columns: `PascalCase`, singular noun (`OrderId`, `CreatedAt`).
+- Stored procedures: `usp_VerbNoun` (e.g., `usp_GetOrderById`).
+- Indexes: `IX_TableName_ColumnName(s)`.
+- Primary keys: `PK_TableName`.
+- Foreign keys: `FK_ChildTable_ParentTable`.
 
-## Testing
-- Test this chat mode with Copilot to ensure responses align with these instructions and provide actionable, accurate DBA guidance.
+## Query Patterns
+- Prefer `EXISTS` over `COUNT(*)` for existence checks.
+- Use `NOLOCK` hints only when explicitly justified and documented; never as a default.
+- Avoid cursors; prefer set-based operations.
+- Use `TOP` with `ORDER BY` when pagination is not implemented; never use `TOP` alone without `ORDER BY` for deterministic results.
+
+## Compatibility
+- Target SQL Server 2019 or later unless the project explicitly targets an earlier version.
+- Avoid deprecated features. Flag usage of `SET ROWCOUNT`, `\!= `, text/ntext/image types, and non-ANSI joins.
+- Use `TRY_CAST` and `TRY_CONVERT` over `CAST`/`CONVERT` when input is untrusted.
+
+## Security
+- Grant least-privilege: use schema-scoped permissions, not `db_datareader`/`db_datawriter` unless justified.
+- Never store plaintext passwords or secrets in SQL scripts or tables.
+- Audit sensitive column access (PII, financial data) via triggers or temporal tables where required.

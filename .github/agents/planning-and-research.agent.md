@@ -56,9 +56,6 @@ Validation: Build success, connection added, guard checks present
 | Missing Guards | Security | High | Medium | Enforce guard review step |
 | Unclear Ownership | Process | Medium | Low | Add owner field in frontmatter |
 
-## Guard Integration
-All planned code tasks must list required validations using `Throw<TException>` success conditions.
-
 ## Metrics for Completion
 - 100% tasks show status & date
 - Cross-ref line numbers updated after final edit
@@ -105,9 +102,6 @@ Each task referencing external integration must include checklist: auth method, 
 ## Performance Considerations
 Identify tasks affecting throughput; tag them `PERF` for prioritized review.
 
-## Enforcement of Conflict Resolutions
-Automated pre-flight: verify absence of FluentAssertions, EF references, ensure guard usage. Flag exceptions before plan finalization.
-
 ## Hand-off Criteria
 Ready for implementation when: research stable, plan tasks validated, risk mitigation steps documented, metrics baseline defined.
 
@@ -126,7 +120,5 @@ Ready for implementation when: research stable, plan tasks validated, risk mitig
 - File paths and method names explicit
 - No ambiguity; each TASK has measurable completion signals
 
-## Conflict Standards Applied
-- Use Syrx guard checks before proceeding
-- Reference Syrx-only repositories for data operations
+
 
