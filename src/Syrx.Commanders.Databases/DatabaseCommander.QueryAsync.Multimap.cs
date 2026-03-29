@@ -13,6 +13,56 @@ namespace Syrx.Commanders.Databases
     /// <typeparam name="TRepository">The repository type whose methods are resolved to configured database commands.</typeparam>
     public sealed partial class DatabaseCommander<TRepository> //: ICommander
     {
+        private static class MultimapTypeShape<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>
+        {
+            public static readonly int Count = GetCount();
+            public static readonly Type[] Types = GetTypes();
+
+            private static int GetCount()
+            {
+                if (typeof(T1) == typeof(Ignore)) return 0;
+                if (typeof(T2) == typeof(Ignore)) return 1;
+                if (typeof(T3) == typeof(Ignore)) return 2;
+                if (typeof(T4) == typeof(Ignore)) return 3;
+                if (typeof(T5) == typeof(Ignore)) return 4;
+                if (typeof(T6) == typeof(Ignore)) return 5;
+                if (typeof(T7) == typeof(Ignore)) return 6;
+                if (typeof(T8) == typeof(Ignore)) return 7;
+                if (typeof(T9) == typeof(Ignore)) return 8;
+                if (typeof(T10) == typeof(Ignore)) return 9;
+                if (typeof(T11) == typeof(Ignore)) return 10;
+                if (typeof(T12) == typeof(Ignore)) return 11;
+                if (typeof(T13) == typeof(Ignore)) return 12;
+                if (typeof(T14) == typeof(Ignore)) return 13;
+                if (typeof(T15) == typeof(Ignore)) return 14;
+                if (typeof(T16) == typeof(Ignore)) return 15;
+
+                return 16;
+            }
+
+            private static Type[] GetTypes()
+                => Count switch
+                {
+                    0 => [],
+                    1 => [typeof(T1)],
+                    2 => [typeof(T1), typeof(T2)],
+                    3 => [typeof(T1), typeof(T2), typeof(T3)],
+                    4 => [typeof(T1), typeof(T2), typeof(T3), typeof(T4)],
+                    5 => [typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5)],
+                    6 => [typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6)],
+                    7 => [typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7)],
+                    8 => [typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8)],
+                    9 => [typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9)],
+                    10 => [typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9), typeof(T10)],
+                    11 => [typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9), typeof(T10), typeof(T11)],
+                    12 => [typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9), typeof(T10), typeof(T11), typeof(T12)],
+                    13 => [typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9), typeof(T10), typeof(T11), typeof(T12), typeof(T13)],
+                    14 => [typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9), typeof(T10), typeof(T11), typeof(T12), typeof(T13), typeof(T14)],
+                    15 => [typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9), typeof(T10), typeof(T11), typeof(T12), typeof(T13), typeof(T14), typeof(T15)],
+                    _ => [typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9), typeof(T10), typeof(T11), typeof(T12), typeof(T13), typeof(T14), typeof(T15), typeof(T16)]
+                };
+        }
+
         /// <summary>
         /// Asynchronously executes a query against the database and returns a sequence of objects of type <typeparamref name="TResult"/>.
         /// </summary>
@@ -52,11 +102,12 @@ namespace Syrx.Commanders.Databases
         public async Task<IEnumerable<TResult>> QueryAsync<T1, T2, TResult>(Func<T1, T2, TResult> map,
             object parameters = null, CancellationToken cancellationToken = default,
             [CallerMemberName] string method = null)
-            => await QueryAsync<T1, T2, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, TResult>(
-                (t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) => map(t1, t2),
-                parameters,
-                cancellationToken,
-                method);
+        {
+            var setting = GetCommandSetting(method);
+            var command = GetCommandDefinition(setting, parameters, cancellationToken: cancellationToken);
+            using var connection = _connector.CreateConnection(setting);
+            return await connection.QueryAsync(command, map, setting.Split);
+        }
 
         /// <summary>
         /// Asynchronously executes a multimap query using three types, combining them with a mapping function to produce the result.
@@ -77,11 +128,12 @@ namespace Syrx.Commanders.Databases
         public async Task<IEnumerable<TResult>> QueryAsync<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> map,
             object parameters = null, CancellationToken cancellationToken = default,
             [CallerMemberName] string method = null)
-            => await QueryAsync<T1, T2, T3, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, TResult>(
-                (t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) => map(t1, t2, t3),
-                parameters,
-                cancellationToken,
-                method);
+        {
+            var setting = GetCommandSetting(method);
+            var command = GetCommandDefinition(setting, parameters, cancellationToken: cancellationToken);
+            using var connection = _connector.CreateConnection(setting);
+            return await connection.QueryAsync(command, map, setting.Split);
+        }
 
         /// <summary>
         /// Asynchronously executes a multimap query using four types, combining them with a mapping function to produce the result.
@@ -103,11 +155,12 @@ namespace Syrx.Commanders.Databases
         public async Task<IEnumerable<TResult>> QueryAsync<T1, T2, T3, T4, TResult>(Func<T1, T2, T3, T4, TResult> map,
             object parameters = null, CancellationToken cancellationToken = default,
             [CallerMemberName] string method = null)
-            => await QueryAsync<T1, T2, T3, T4, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, TResult>(
-                (t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) => map(t1, t2, t3, t4),
-                parameters,
-                cancellationToken,
-                method);
+        {
+            var setting = GetCommandSetting(method);
+            var command = GetCommandDefinition(setting, parameters, cancellationToken: cancellationToken);
+            using var connection = _connector.CreateConnection(setting);
+            return await connection.QueryAsync(command, map, setting.Split);
+        }
 
         /// <summary>
         /// Asynchronously executes a multimap query using five types, combining them with a mapping function to produce the result.
@@ -130,11 +183,12 @@ namespace Syrx.Commanders.Databases
         public async Task<IEnumerable<TResult>> QueryAsync<T1, T2, T3, T4, T5, TResult>(
             Func<T1, T2, T3, T4, T5, TResult> map, object parameters = null,
             CancellationToken cancellationToken = default, [CallerMemberName] string method = null)
-            => await QueryAsync<T1, T2, T3, T4, T5, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, TResult>(
-                (t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) => map(t1, t2, t3, t4, t5),
-                parameters,
-                cancellationToken,
-                method);
+        {
+            var setting = GetCommandSetting(method);
+            var command = GetCommandDefinition(setting, parameters, cancellationToken: cancellationToken);
+            using var connection = _connector.CreateConnection(setting);
+            return await connection.QueryAsync(command, map, setting.Split);
+        }
 
         /// <summary>
         /// Asynchronously executes a multimap query using six types, combining them with a mapping function to produce the result.
@@ -158,11 +212,12 @@ namespace Syrx.Commanders.Databases
         public async Task<IEnumerable<TResult>> QueryAsync<T1, T2, T3, T4, T5, T6, TResult>(
             Func<T1, T2, T3, T4, T5, T6, TResult> map, object parameters = null,
             CancellationToken cancellationToken = default, [CallerMemberName] string method = null)
-            => await QueryAsync<T1, T2, T3, T4, T5, T6, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, TResult>(
-                (t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) => map(t1, t2, t3, t4, t5, t6),
-                parameters,
-                cancellationToken,
-                method);
+        {
+            var setting = GetCommandSetting(method);
+            var command = GetCommandDefinition(setting, parameters, cancellationToken: cancellationToken);
+            using var connection = _connector.CreateConnection(setting);
+            return await connection.QueryAsync(command, map, setting.Split);
+        }
 
         /// <summary>
         /// Asynchronously executes a multimap query using seven types, combining them with a mapping function to produce the result.
@@ -187,11 +242,12 @@ namespace Syrx.Commanders.Databases
         public async Task<IEnumerable<TResult>> QueryAsync<T1, T2, T3, T4, T5, T6, T7, TResult>(
             Func<T1, T2, T3, T4, T5, T6, T7, TResult> map, object parameters = null,
             CancellationToken cancellationToken = default, [CallerMemberName] string method = null)
-            => await QueryAsync<T1, T2, T3, T4, T5, T6, T7, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, Ignore, TResult>(
-                (t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) => map(t1, t2, t3, t4, t5, t6, t7),
-                parameters,
-                cancellationToken,
-                method);
+        {
+            var setting = GetCommandSetting(method);
+            var command = GetCommandDefinition(setting, parameters, cancellationToken: cancellationToken);
+            using var connection = _connector.CreateConnection(setting);
+            return await connection.QueryAsync(command, map, setting.Split);
+        }
 
         /// <summary>
         /// Asynchronously executes a multimap query using eight types, combining them with a mapping function to produce the result.
@@ -512,7 +568,7 @@ namespace Syrx.Commanders.Databases
         /// This method uses Dapper's multimap functionality to join multiple objects from a query result.
         /// It automatically detects the number of actual types by identifying <see cref="Ignore"/> placeholder types.
         /// For type parameters marked as <see cref="Ignore"/>, default values of the appropriate type are provided to the mapping function.
-        /// The method uses reflection to dynamically build the type array for Dapper's QueryAsync method.
+        /// The method uses cached generic type-shape metadata to avoid rebuilding the Dapper type array on each call.
         /// </remarks>
         public async Task<IEnumerable<TResult>> QueryAsync<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TResult>(
             Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TResult> map,
@@ -522,40 +578,27 @@ namespace Syrx.Commanders.Databases
         {
             var setting = GetCommandSetting(method);
             var command = GetCommandDefinition(setting, parameters, cancellationToken: cancellationToken);
-
-            // Build the types array, excluding unused object placeholders
-            var allTypes = new Type[]
-            {
-                typeof(T1), typeof(T2), typeof(T3), typeof(T4),
-                typeof(T5), typeof(T6), typeof(T7), typeof(T8),
-                typeof(T9), typeof(T10), typeof(T11), typeof(T12),
-                typeof(T13), typeof(T14), typeof(T15), typeof(T16)
-            };
-            
-            var types = allTypes.TakeWhile(t => t != typeof(Ignore)).ToArray();
-            if (types.Length == 0 || types.Length > 16)
-            {
-                types = allTypes; // Fallback to all types if no Ignore placeholders or edge case
-            }
+            var count = MultimapTypeShape<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>.Count;
+            var types = MultimapTypeShape<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>.Types;
 
             Func<object[], TResult> internalMapper = (a) =>
             {
-                var one = types.Length > 0 ? (T1)a[0] : default(T1)!;
-                var two = types.Length > 1 ? (T2)a[1] : default(T2)!;
-                var three = types.Length > 2 ? (T3)a[2] : default(T3)!;
-                var four = types.Length > 3 ? (T4)a[3] : default(T4)!;
-                var five = types.Length > 4 ? (T5)a[4] : default(T5)!;
-                var six = types.Length > 5 ? (T6)a[5] : default(T6)!;
-                var seven = types.Length > 6 ? (T7)a[6] : default(T7)!;
-                var eight = types.Length > 7 ? (T8)a[7] : default(T8)!;
-                var nine = types.Length > 8 ? (T9)a[8] : default(T9)!;
-                var ten = types.Length > 9 ? (T10)a[9] : default(T10)!;
-                var eleven = types.Length > 10 ? (T11)a[10] : default(T11)!;
-                var twelve = types.Length > 11 ? (T12)a[11] : default(T12)!;
-                var thirteen = types.Length > 12 ? (T13)a[12] : default(T13)!;
-                var fourteen = types.Length > 13 ? (T14)a[13] : default(T14)!;
-                var fifteen = types.Length > 14 ? (T15)a[14] : default(T15)!;
-                var sixteen = types.Length > 15 ? (T16)a[15] : default(T16)!;
+                var one = count > 0 ? (T1)a[0] : default(T1)!;
+                var two = count > 1 ? (T2)a[1] : default(T2)!;
+                var three = count > 2 ? (T3)a[2] : default(T3)!;
+                var four = count > 3 ? (T4)a[3] : default(T4)!;
+                var five = count > 4 ? (T5)a[4] : default(T5)!;
+                var six = count > 5 ? (T6)a[5] : default(T6)!;
+                var seven = count > 6 ? (T7)a[6] : default(T7)!;
+                var eight = count > 7 ? (T8)a[7] : default(T8)!;
+                var nine = count > 8 ? (T9)a[8] : default(T9)!;
+                var ten = count > 9 ? (T10)a[9] : default(T10)!;
+                var eleven = count > 10 ? (T11)a[10] : default(T11)!;
+                var twelve = count > 11 ? (T12)a[11] : default(T12)!;
+                var thirteen = count > 12 ? (T13)a[12] : default(T13)!;
+                var fourteen = count > 13 ? (T14)a[13] : default(T14)!;
+                var fifteen = count > 14 ? (T15)a[14] : default(T15)!;
+                var sixteen = count > 15 ? (T16)a[15] : default(T16)!;
 
                 return map(one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen, fourteen, fifteen, sixteen);
             };

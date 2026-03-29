@@ -112,11 +112,11 @@ public class UserRepository
         _commander = commander;
     }
     
-    public async Task<User> GetByIdAsync(int id)
-        => await _commander.QueryAsync<User>(new { id }).SingleOrDefaultAsync();
+    public async Task<User> RetrieveAsync(int id, CancellationToken cancellationToken = default)
+        => (await _commander.QueryAsync<User>(new { id }, cancellationToken)).FirstOrDefault();
         
-    public async Task<User> CreateUserAsync(User user)
-        => await _commander.ExecuteAsync(user) ? user : default;
+    public async Task<User> CreateUserAsync(User user, CancellationToken cancellationToken = default)
+        => await _commander.ExecuteAsync(user, cancellationToken) ? user : default;
 }
 ```
 
@@ -128,7 +128,7 @@ The reader resolves method names to configured commands:
 services.UseSyrx(builder => builder
     .UseSqlServer(sqlServer => sqlServer
         .AddCommand<UserRepository>(commands => commands
-            .ForMethod(nameof(UserRepository.GetByIdAsync), command => command
+            .ForMethod(nameof(UserRepository.RetrieveAsync), command => command
                 .UseConnectionAlias("DefaultConnection")
                 .UseCommandText("SELECT * FROM Users WHERE Id = @id"))
             .ForMethod(nameof(UserRepository.CreateUserAsync), command => command
@@ -155,3 +155,6 @@ This project is licensed under the [MIT License](https://github.com/Syrx/Syrx/bl
 ## Credits
 
 Built as part of the Syrx data access framework to provide internal command resolution capabilities.
+
+
+

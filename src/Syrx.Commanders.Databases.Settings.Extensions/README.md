@@ -137,7 +137,7 @@ var settings = new CommanderSettingsBuilder()
     .AddConnectionString("Default", "Server=localhost;Database=MyApp;Trusted_Connection=true;")
     .AddNamespace("MyApp.Repositories", ns => ns
         .AddType("UserRepository", type => type
-            .AddCommand("GetByIdAsync", cmd => cmd
+            .AddCommand("RetrieveAsync", cmd => cmd
                 .UseCommandText("SELECT * FROM Users WHERE Id = @id")
                 .UseConnectionAlias("Default")
                 .SetCommandTimeout(30))))
@@ -174,7 +174,7 @@ var settings = new CommanderSettingsBuilder()
     .AddNamespace("MyApp.Repositories", ns => ns
         .AddType("UserRepository", type => type
             // Read operations use slave
-            .AddCommand("GetAllUsersAsync", cmd => cmd
+            .AddCommand("RetrieveAllUsersAsync", cmd => cmd
                 .UseCommandText("SELECT * FROM Users WHERE IsActive = 1")
                 .UseConnectionAlias("Slave")
                 .SetCommandTimeout(30))
@@ -187,7 +187,7 @@ var settings = new CommanderSettingsBuilder()
                 .SetIsolationLevel(IsolationLevel.ReadCommitted))
             
             // Complex queries with multi-mapping
-            .AddCommand("GetUsersWithProfilesAsync", cmd => cmd
+            .AddCommand("RetrieveWithProfilesAsync", cmd => cmd
                 .UseCommandText(@"
                     SELECT u.*, p.*
                     FROM Users u
@@ -216,7 +216,7 @@ builder.AddConnectionString("Primary", primaryConnection)
 ### Command Configuration
 
 ```csharp
-type.AddCommand("GetUserByIdAsync", cmd => cmd
+type.AddCommand("RetrieveUserByIdAsync", cmd => cmd
     .UseCommandText("SELECT * FROM Users WHERE Id = @id")
     .UseConnectionAlias("Primary")
     .SetCommandTimeout(30)
@@ -224,7 +224,7 @@ type.AddCommand("GetUserByIdAsync", cmd => cmd
     .SetIsolationLevel(IsolationLevel.ReadCommitted));
 
 // Stored procedure configuration
-type.AddCommand("GetUserStatistics", cmd => cmd
+type.AddCommand("RetrieveUserStatistics", cmd => cmd
     .UseCommandText("sp_GetUserStats")
     .UseConnectionAlias("Analytics")
     .SetCommandType(CommandType.StoredProcedure)
@@ -241,7 +241,7 @@ builder.AddNamespace("MyApp.Data.Repositories", ns => ns
 
 void ConfigureUserRepository(TypeSettingBuilder type)
 {
-    type.AddCommand("GetByIdAsync", cmd => cmd
+    type.AddCommand("RetrieveAsync", cmd => cmd
         .UseCommandText("SELECT * FROM Users WHERE Id = @id")
         .UseConnectionAlias("Default"));
         
@@ -262,10 +262,10 @@ public CommanderSettings BuildSimpleConfiguration()
         .AddConnectionString("Database", connectionString)
         .AddNamespace("MyApp.Repositories", ns => ns
             .AddType("UserRepository", type => type
-                .AddCommand("GetAllAsync", cmd => cmd
+                .AddCommand("RetrieveAsync", cmd => cmd
                     .UseCommandText("SELECT * FROM Users")
                     .UseConnectionAlias("Database"))
-                .AddCommand("GetByIdAsync", cmd => cmd
+                .AddCommand("RetrieveAsync", cmd => cmd
                     .UseCommandText("SELECT * FROM Users WHERE Id = @id")
                     .UseConnectionAlias("Database"))
                 .AddCommand("CreateAsync", cmd => cmd
@@ -286,15 +286,15 @@ public CommanderSettings BuildMultiDatabaseConfiguration()
         .AddConnectionString("OrderDB", orderDbConnectionString)
         .AddNamespace("MyApp.Repositories", ns => ns
             .AddType("UserRepository", type => type
-                .AddCommand("GetUsersAsync", cmd => cmd
+                .AddCommand("RetrieveUsersAsync", cmd => cmd
                     .UseCommandText("SELECT * FROM Users")
                     .UseConnectionAlias("UserDB")))
             .AddType("ProductRepository", type => type
-                .AddCommand("GetProductsAsync", cmd => cmd
+                .AddCommand("RetrieveProductsAsync", cmd => cmd
                     .UseCommandText("SELECT * FROM Products")
                     .UseConnectionAlias("ProductDB")))
             .AddType("OrderRepository", type => type
-                .AddCommand("GetOrdersAsync", cmd => cmd
+                .AddCommand("RetrieveOrdersAsync", cmd => cmd
                     .UseCommandText("SELECT * FROM Orders")
                     .UseConnectionAlias("OrderDB"))))
         .Build();
@@ -307,7 +307,7 @@ public CommanderSettings BuildMultiDatabaseConfiguration()
 public void ConfigureComplexCommands(TypeSettingBuilder type)
 {
     // Complex query with multiple joins
-    type.AddCommand("GetOrdersWithDetailsAsync", cmd => cmd
+    type.AddCommand("RetrieveOrdersWithDetailsAsync", cmd => cmd
         .UseCommandText(@"
             SELECT o.*, c.*, oi.*, p.*
             FROM Orders o
@@ -357,3 +357,6 @@ This project is licensed under the [MIT License](https://github.com/Syrx/Syrx/bl
 
 Built on top of [Dapper](https://github.com/DapperLib/Dapper) and standard .NET configuration patterns.
 ````
+
+
+

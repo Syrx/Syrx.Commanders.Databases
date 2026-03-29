@@ -56,7 +56,7 @@ Install-Package Syrx.Commanders.Databases
 <PackageReference Include="Syrx.Commanders.Databases" Version="3.0.0" />
 ```
 
-> **Note**: This package provides the core database abstractions. You'll also need a database-specific connector package and configuration.
+> **Note**: This package provides the core database abstractions. Pair it with a database-specific connector package and configuration package. Preferred configuration is via `Syrx.Commanders.Databases.Settings.Extensions` (builder pattern), with JSON/XML packages as optional file-based alternatives.
 
 ## Core Components
 
@@ -83,8 +83,8 @@ Commands are resolved using the following pattern:
 
 For example:
 - Class: `MyApp.Repositories.UserRepository`
-- Method: `GetUserByIdAsync`
-- Resolved Command: `MyApp.Repositories.UserRepository.GetUserByIdAsync`
+- Method: `RetrieveUserByIdAsync`
+- Resolved Command: `MyApp.Repositories.UserRepository.RetrieveUserByIdAsync`
 
 ### Transaction Management
 
@@ -109,10 +109,10 @@ public class UserRepository
         _commander = commander;
     }
 
-    public async Task<User> GetByIdAsync(int id)
+    public async Task<User> RetrieveAsync(int id, CancellationToken cancellationToken = default)
     {
-        var users = await _commander.QueryAsync<User>(new { id });
-        return users.FirstOrDefault();
+        var result = await _commander.QueryAsync<User>(new { id }, cancellationToken);
+        return result.FirstOrDefault();
     }
 }
 ```
@@ -120,46 +120,51 @@ public class UserRepository
 ### Query Operations
 
 ```csharp
-// Simple query
-public async Task<IEnumerable<User>> GetAllAsync()
+// Paged collection query
+public async Task<IEnumerable<User>> RetrieveAllAsync(
+    int page = 1,
+    int size = 100,
+    CancellationToken cancellationToken = default)
 {
-    return await _commander.QueryAsync<User>();
+    return await _commander.QueryAsync<User>(new { page, size }, cancellationToken);
 }
 
 // Parameterized query
-public async Task<User> GetByEmailAsync(string email)
+public async Task<User> RetrieveByEmailAsync(string email, CancellationToken cancellationToken = default)
 {
-    var users = await _commander.QueryAsync<User>(new { email });
-    return users.FirstOrDefault();
+    var result = await _commander.QueryAsync<User>(new { email }, cancellationToken);
+    return result.FirstOrDefault();
 }
 
 // Complex query with multiple parameters
-public async Task<IEnumerable<User>> GetActiveUsersByRoleAsync(string role, DateTime since)
+public async Task<IEnumerable<User>> RetrieveActiveUsersByRoleAsync(
+    string role,
+    DateTime since,
+    CancellationToken cancellationToken = default)
 {
-    return await _commander.QueryAsync<User>(new { role, since });
+    return await _commander.QueryAsync<User>(new { role, since }, cancellationToken);
 }
 ```
 
 ### Execute Operations
 
 ```csharp
-// Insert operation
-public async Task<User> CreateAsync(User user)
+// Create operation
+public async Task<User> CreateAsync(User user, CancellationToken cancellationToken = default)
 {
-    var success = await _commander.ExecuteAsync(user);
-    return success ? user : null;
+    return await _commander.ExecuteAsync(user, cancellationToken) ? user : null;
 }
 
 // Update operation
-public async Task<User> UpdateAsync(User user)
+public async Task<User> UpdateAsync(User user, CancellationToken cancellationToken = default)
 {
-    return await _commander.ExecuteAsync(user) ? user : null;
+    return await _commander.ExecuteAsync(user, cancellationToken) ? user : null;
 }
 
 // Delete operation
-public async Task<User> DeleteAsync(User user)
+public async Task<User> DeleteAsync(User user, CancellationToken cancellationToken = default)
 {
-    return await _commander.ExecuteAsync(user) ? user : null;
+    return await _commander.ExecuteAsync(user, cancellationToken) ? user : null;
 }
 ```
 
@@ -169,18 +174,19 @@ Handle complex object relationships:
 
 ```csharp
 // Two-table join
-public async Task<IEnumerable<User>> GetUsersWithProfilesAsync()
+public async Task<IEnumerable<User>> RetrieveWithProfilesAsync(CancellationToken cancellationToken = default)
 {
     return await _commander.QueryAsync<User, Profile, User>(
         (user, profile) => 
         {
             user.Profile = profile;
             return user;
-        });
+        },
+        cancellationToken: cancellationToken);
 }
 
 // Three-table join
-public async Task<IEnumerable<Order>> GetOrdersWithDetailsAsync()
+public async Task<IEnumerable<Order>> RetrieveOrdersWithDetailsAsync(CancellationToken cancellationToken = default)
 {
     return await _commander.QueryAsync<Order, OrderItem, Product, Order>(
         (order, item, product) =>
@@ -189,7 +195,8 @@ public async Task<IEnumerable<Order>> GetOrdersWithDetailsAsync()
             order.Items ??= new List<OrderItem>();
             order.Items.Add(item);
             return order;
-        });
+        },
+        cancellationToken: cancellationToken);
 }
 ```
 
@@ -198,7 +205,7 @@ public async Task<IEnumerable<Order>> GetOrdersWithDetailsAsync()
 Handle stored procedures returning multiple result sets:
 
 ```csharp
-public async Task<UserDashboardData> GetUserDashboardAsync(int userId)
+public async Task<UserDashboardData> RetrieveUserDashboardAsync(int userId, CancellationToken cancellationToken = default)
 {
     var (users, orders, notifications) = await _commander
         .QueryMultipleAsync<User, Order, Notification>(new { userId });
@@ -214,7 +221,20 @@ public async Task<UserDashboardData> GetUserDashboardAsync(int userId)
 
 ## Configuration
 
-Command configuration varies by database provider, but typically includes:
+Recommended configuration uses the fluent builders from `Syrx.Commanders.Databases.Settings.Extensions`:
+
+```csharp
+var settings = new CommanderSettingsBuilder()
+    .AddConnectionString("DefaultConnection", connectionString)
+    .AddNamespace("MyApp.Repositories", ns => ns
+        .AddType("UserRepository", type => type
+            .AddCommand("RetrieveAsync", cmd => cmd
+                .UseCommandText("SELECT * FROM Users WHERE Id = @id")
+                .UseConnectionAlias("DefaultConnection"))))
+    .Build();
+```
+
+All configuration sources eventually produce `CommandSetting` entries with values like:
 
 ```csharp
 // Example configuration structure
@@ -234,29 +254,32 @@ var command = new CommandSetting
 Execute operations are automatically wrapped in transactions:
 
 ```csharp
-public async Task<User> UpdateUserAsync(User user)
+public async Task<User> UpdateUserAsync(User user, CancellationToken cancellationToken = default)
 {
     // Automatically starts transaction
     // Commits on success
     // Rolls back on exception
-    return await _commander.ExecuteAsync(user) ? user : null;
+    return await _commander.ExecuteAsync(user, cancellationToken) ? user : null;
 }
 ```
 
 ### Transaction Scope
 
 ```csharp
-public async Task<bool> ComplexOperationAsync(User user, List<Order> orders)
+public async Task<bool> ComplexOperationAsync(
+    User user,
+    List<Order> orders,
+    CancellationToken cancellationToken = default)
 {
     // Each execute operation runs in its own transaction
     // For multi-operation transactions, use explicit transaction scope
     
-    var userSuccess = await _commander.ExecuteAsync(user);
+    var userSuccess = await _commander.ExecuteAsync(user, cancellationToken);
     if (!userSuccess) return false;
     
     foreach (var order in orders)
     {
-        var orderSuccess = await _commander.ExecuteAsync(order);
+        var orderSuccess = await _commander.ExecuteAsync(order, cancellationToken);
         if (!orderSuccess) return false;
     }
     
@@ -271,7 +294,7 @@ The DatabaseCommander provides comprehensive error handling:
 ```csharp
 try
 {
-    var user = await _commander.QueryAsync<User>(new { id });
+    var result = await _commander.QueryAsync<User>(new { id });
 }
 catch (InvalidOperationException ex)
 {
@@ -306,10 +329,10 @@ return await _commander.QueryAsync<User>(new { email, isActive = true });
 // (configured in command settings)
 
 // Good: Use async methods consistently
-public async Task<User> GetUserAsync(int id)
+public async Task<User> RetrieveUserAsync(int id, CancellationToken cancellationToken = default)
 {
-    var users = await _commander.QueryAsync<User>(new { id });
-    return users.FirstOrDefault();
+    var result = await _commander.QueryAsync<User>(new { id }, cancellationToken);
+    return result.FirstOrDefault();
 }
 ```
 
@@ -324,8 +347,9 @@ public async Task<User> GetUserAsync(int id)
 ### Configuration & Extensions
 - **[Syrx.Commanders.Databases.Extensions](https://www.nuget.org/packages/Syrx.Commanders.Databases.Extensions/)**: Dependency injection extensions
 - **[Syrx.Commanders.Databases.Settings](https://www.nuget.org/packages/Syrx.Commanders.Databases.Settings/)**: Configuration settings
-- **[Syrx.Commanders.Databases.Settings.Extensions.Json](https://www.nuget.org/packages/Syrx.Commanders.Databases.Settings.Extensions.Json/)**: JSON configuration
-- **[Syrx.Commanders.Databases.Settings.Extensions.Xml](https://www.nuget.org/packages/Syrx.Commanders.Databases.Settings.Extensions.Xml/)**: XML configuration
+- **[Syrx.Commanders.Databases.Settings.Extensions](https://www.nuget.org/packages/Syrx.Commanders.Databases.Settings.Extensions/)**: Recommended builder-pattern configuration
+- **[Syrx.Commanders.Databases.Settings.Extensions.Json](https://www.nuget.org/packages/Syrx.Commanders.Databases.Settings.Extensions.Json/)**: Optional JSON file-based configuration
+- **[Syrx.Commanders.Databases.Settings.Extensions.Xml](https://www.nuget.org/packages/Syrx.Commanders.Databases.Settings.Extensions.Xml/)**: Optional XML file-based configuration
 
 ### Core Framework
 - **[Syrx](https://www.nuget.org/packages/Syrx/)**: Core interfaces and abstractions
@@ -337,3 +361,6 @@ This project is licensed under the [MIT License](https://github.com/Syrx/Syrx/bl
 ## Credits
 
 Built on top of [Dapper](https://github.com/DapperLib/Dapper) for high-performance database access.
+
+
+

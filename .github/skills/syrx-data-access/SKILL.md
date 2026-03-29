@@ -1,110 +1,103 @@
 ---
 name: syrx-data-access
-description: >
-  **SKILL** - Implement Syrx repositories and SQL Server data access using the workspace's canonical explicit-SQL pattern.
-  USE FOR: repository interfaces, `CommandStrings`, installer wiring, `ICommander<TRepository>` usage, paging, multi-mapping, and Syrx-specific package/configuration guidance.
-  DO NOT USE FOR: EF Core, generic ORM guidance, or non-Syrx data access abstractions.
+description: Use when implementing or reviewing .NET repository data access that must use Syrx ICommander<TRepository>, explicit parameterized SQL, and project-approved command configuration patterns.
 ---
 
 # Syrx Data Access Skill
 
-## Role
+## Overview
 
-Use this skill when implementing or reviewing .NET data access that must follow the workspace's Syrx-only rule.
+Use this skill to implement and review Syrx repository data access in a reusable way across projects, even when repository-specific docs are unavailable.
 
-## Canonical Pattern
+## When to Use
 
-Follow this sequence:
+- Implementing or reviewing repositories that depend on Syrx.
+- Mapping repository methods to SQL commands.
+- Choosing builder, JSON, or XML command configuration.
+- Applying paging, multi-mapping, or multi-result patterns.
+- Verifying tests for repository behavior without live DB access.
 
-1. Repository interface
-2. Repository implementation
-3. `CommandStrings`
-4. Syrx installer mapping
-5. DI registration
+## When Not to Use
 
-Pattern summary:
+- EF Core or alternate ORM implementations.
+- Generic data-access advice not tied to Syrx.
+- Domain/service-layer business logic decisions.
 
-`Repository -> Installer -> CommandStrings -> DI Registration`
+## Source of Truth
 
-## Core Concepts
+Read in this order when behavior is unclear:
 
-- Syrx with explicit SQL only
-- `ICommander<TRepository>` as the primary execution abstraction
-- `CommandStrings.cs` for centralized SQL
-- `SyrxInstaller.cs` for command-to-method mapping
-- SQL Server as the default target database in this workspace
+1. Skill-local references in `references/`:
+   - `references/quick-reference.md`
+   - `references/implementation-examples.md`
+   - `references/review-checklist.md`
+2. Project instructions, when present (for example `/.github/instructions/data-access-and-syrx.instructions.md`).
+3. Project reference docs, when present (for example `/.docs/reference/`).
+4. Syrx framework docs and package documentation available to the project.
 
-## Implementation Rules
+If guidance conflicts, prefer:
+
+1. Security and validation rules active in the current project.
+2. Project-level coding conventions.
+3. Skill-local references as the portable baseline.
+
+## Decision Path
+
+1. Use `ICommander<TRepository>` in repository implementations.
+2. Choose command mapping style:
+   - Project style: configuration-driven mapping (builder/JSON/XML) with namespace.type.method resolution.
+   - App style with command constants: Interface -> Implementation -> CommandStrings -> Installer -> DI.
+3. Keep SQL explicit, parameterized, and method-mapped.
+4. Register DI and verify with unit tests that mock `ICommander<TRepository>`.
+
+## Core Rules
 
 - Use explicit, parameterized SQL only.
-- Do not introduce EF Core or alternate ORMs.
-- Coalesce query results to empty enumerables where appropriate.
-- Use `CancellationToken` on async repository methods.
-- Validate public inputs with Syrx guard semantics.
-- Prefer soft deletes and explicit column lists.
-- Keep repository code focused on persistence mapping, not business logic.
+- No string concatenation or interpolation for SQL.
+- Use explicit column lists; avoid `SELECT *`.
+- Keep repository code focused on persistence mapping only.
+- Validate boundary inputs with Syrx guard semantics.
+- Use async APIs and pass `CancellationToken`.
+- Prefer paging for list endpoints (`OFFSET/FETCH` on SQL Server).
 
-## Typical Repository Shape
+## Repository Pattern
 
-```csharp
-public interface IUserRepository
-{
-    Task<User> CreateAsync(User user, CancellationToken cancellationToken = default);
-    Task<User?> RetrieveAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<IEnumerable<User>> RetrieveAllAsync(int page = 1, int size = 100, CancellationToken cancellationToken = default);
-    Task<bool> UpdateAsync(User user, CancellationToken cancellationToken = default);
-    Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
-}
-```
+Define interface -> inject `ICommander<TRepository>` -> call async query/execute methods -> isolate mapping/materialization -> register repository in DI.
 
-```csharp
-public sealed class UserRepository : IUserRepository
-{
-    private readonly ICommander<UserRepository> _commander;
+## Configuration Patterns
 
-    public UserRepository(ICommander<UserRepository> commander)
-    {
-        _commander = commander;
-    }
+- Select one configuration mode per bounded context and apply it consistently:
+   - Configuration-driven mapping (builder/JSON/XML).
+   - Command constants plus installer mapping.
+- Method names should match configured command keys unless explicitly overridden.
+- Keep connection aliases centralized and consistent.
+- Use per-command timeout/flags only with evidence.
 
-    public async Task<User?> RetrieveAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        var results = await _commander.QueryAsync<User>(new { id }, cancellationToken)
-            ?? Enumerable.Empty<User>();
+## Query Patterns
 
-        return results.FirstOrDefault();
-    }
-}
-```
+- Simple read/write: `QueryAsync<T>` and `ExecuteAsync(...)`.
+- Multi-mapping: use when a joined row must be split into related objects.
+- Multiple result sets: use when batching independent sets reduces round trips.
+- Avoid N+1 repository loops; batch when feasible.
 
-## SQL and CommandStrings
+## Security and Reliability Checks
 
-- Keep SQL in `CommandStrings`.
-- Match parameter names exactly.
-- Avoid `SELECT *`.
-- Use paging for all `RetrieveAllAsync` methods.
+- Validate all external input at repository boundaries.
+- Keep DB credentials/secrets out of code and logs.
+- Log actionable command context (name, duration, row count) without leaking sensitive values.
+- Do not swallow database exceptions silently.
 
-## Installer and Registration
+## Testing Guidance
 
-- Map repository methods explicitly in the Syrx installer.
-- Register repository interfaces in DI separately from command mappings.
-- Keep connection aliases and connection string configuration centralized.
+- Unit tests: mock `ICommander<TRepository>`; no live DB calls.
+- Integration tests: use isolated test databases and deterministic fixtures.
 
-## Packages
+See `references/review-checklist.md` for review criteria and `references/implementation-examples.md` for concrete patterns.
 
-Prefer the matching stable Syrx packages aligned with the solution.
+## Anti-Patterns
 
-## Advanced Usage
-
-- Use multi-mapping for joined result sets when necessary.
-- Use batched result sets when it reduces round-trips cleanly.
-- Add optimistic concurrency support with version columns when the domain requires it.
-
-## Quality Bar
-
-- Explicit SQL
-- Guarded inputs
-- Async + cancellation support
-- No business logic in repositories
-- Tests use xUnit + Moq only
-- No FluentAssertions
+- Injecting internal command readers directly in application repositories.
+- Dynamic SQL table/object name construction from untrusted input.
+- Returning unbounded result sets for large collections.
+- Mixing domain rules into repository persistence code.
+- Using complex mapping patterns without measured need.

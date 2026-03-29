@@ -144,9 +144,9 @@ Builders package is standalone
 
 ### Command Resolution Pattern
 ```
-Repository Method Call: UserRepository.GetByIdAsync(int id)
+Repository Method Call: UserRepository.RetrieveByIdAsync(int id)
                     ↓
-Resolved Command Key: "MyApp.Repositories.UserRepository.GetByIdAsync"
+Resolved Command Key: "MyApp.Repositories.UserRepository.RetrieveByIdAsync"
                     ↓
 Command Configuration: { CommandText: "SELECT * FROM Users WHERE Id = @id", ... }
                     ↓
@@ -154,9 +154,9 @@ Database Execution: Execute with Dapper
 ```
 
 ### Configuration Sources
-1. **JSON**: Most common, uses `UseFile()` extension
-2. **XML**: Alternative format, same schema as JSON
-3. **Programmatic**: Builder pattern for dynamic configuration
+1. **Programmatic (recommended)**: Builder pattern via `Syrx.Commanders.Databases.Settings.Extensions`
+2. **JSON**: File-based alternative using `UseFile()` extension
+3. **XML**: File-based alternative using `UseFile()` extension
 
 ## Testing Patterns
 
@@ -164,7 +164,7 @@ Database Execution: Execute with Dapper
 ```csharp
 // Repositories should be tested with ICommander<T> mocks
 var mockCommander = new Mock<ICommander<UserRepository>>();
-mockCommander.Setup(x => x.QueryAsync<User>(It.IsAny<object>(), default, "GetByIdAsync"))
+mockCommander.Setup(x => x.QueryAsync<User>(It.IsAny<object>(), default, "RetrieveByIdAsync"))
             .ReturnsAsync(new[] { expectedUser });
 ```
 
@@ -254,10 +254,10 @@ public class UserRepository
         _commander = commander;
     }
     
-    public async Task<User> GetByIdAsync(int id)
+    public async Task<User> RetrieveByIdAsync(int id)
     {
-        var users = await _commander.QueryAsync<User>(new { id });
-        return users.FirstOrDefault();
+        var result = await _commander.QueryAsync<User>(new { id });
+        return result.FirstOrDefault();
     }
 }
 ```
@@ -275,7 +275,7 @@ public class UserRepository
         {
           "Name": "UserRepository",
           "Commands": {
-            "GetByIdAsync": {
+            "RetrieveByIdAsync": {
               "CommandText": "SELECT * FROM Users WHERE Id = @id",
               "ConnectionAlias": "Default"
             }

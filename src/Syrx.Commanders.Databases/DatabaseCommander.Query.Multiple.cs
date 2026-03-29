@@ -12,17 +12,6 @@ namespace Syrx.Commanders.Databases
     /// <typeparam name="TRepository">The repository type whose methods are resolved to configured database commands.</typeparam>
     public sealed partial class DatabaseCommander<TRepository>
     {
-        private static readonly MethodInfo GridReadMethodDefinition = typeof(SqlMapper.GridReader).GetMethods()
-            .Single(m =>
-                m.Name == "Read" &&
-                m.IsGenericMethodDefinition &&
-                m.GetParameters().Length == 1 &&
-                m.GetParameters()[0].ParameterType == typeof(bool));
-
-        private static readonly MethodInfo EmptyMethodDefinition = typeof(Enumerable).GetMethod(nameof(Enumerable.Empty))!;
-        private static readonly ConcurrentDictionary<Type, MethodInfo> GridReadMethods = new();
-        private static readonly ConcurrentDictionary<Type, MethodInfo> EmptyMethods = new();
-
         /// <summary>
         /// Executes a query that returns multiple result sets and applies a mapping function to transform the first result set into the desired output.
         /// </summary>
@@ -426,7 +415,7 @@ namespace Syrx.Commanders.Databases
         /// This method uses Dapper's QueryMultiple functionality to execute a single command that returns multiple result sets.
         /// It automatically detects the number of actual result sets by identifying <see cref="Ignore"/> placeholder types.
         /// For type parameters marked as <see cref="Ignore"/>, empty enumerables of the appropriate type are provided to the mapping function.
-        /// The method uses reflection to dynamically read the correct number of result sets and create empty enumerables for unused types.
+        /// The method uses strongly typed Read calls and provides empty enumerables for unused types.
         /// </remarks>
         public IEnumerable<TResult>
             Query<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TResult>(
@@ -442,23 +431,60 @@ namespace Syrx.Commanders.Databases
             {
                 var reader = connection.QueryMultiple(command);
                 
-                var types = new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9), typeof(T10), typeof(T11), typeof(T12), typeof(T13), typeof(T14), typeof(T15), typeof(T16) };
-                var actualTypeCount = types.TakeWhile(t => t != typeof(Ignore)).Count();
-                
-                // Read the actual result sets
-                var actualResults = new object[16];
-                for (int i = 0; i < actualTypeCount; i++)
+                var actualTypeCount = 16;
+                if (typeof(T1) == typeof(Ignore)) actualTypeCount = 0;
+                else if (typeof(T2) == typeof(Ignore)) actualTypeCount = 1;
+                else if (typeof(T3) == typeof(Ignore)) actualTypeCount = 2;
+                else if (typeof(T4) == typeof(Ignore)) actualTypeCount = 3;
+                else if (typeof(T5) == typeof(Ignore)) actualTypeCount = 4;
+                else if (typeof(T6) == typeof(Ignore)) actualTypeCount = 5;
+                else if (typeof(T7) == typeof(Ignore)) actualTypeCount = 6;
+                else if (typeof(T8) == typeof(Ignore)) actualTypeCount = 7;
+                else if (typeof(T9) == typeof(Ignore)) actualTypeCount = 8;
+                else if (typeof(T10) == typeof(Ignore)) actualTypeCount = 9;
+                else if (typeof(T11) == typeof(Ignore)) actualTypeCount = 10;
+                else if (typeof(T12) == typeof(Ignore)) actualTypeCount = 11;
+                else if (typeof(T13) == typeof(Ignore)) actualTypeCount = 12;
+                else if (typeof(T14) == typeof(Ignore)) actualTypeCount = 13;
+                else if (typeof(T15) == typeof(Ignore)) actualTypeCount = 14;
+                else if (typeof(T16) == typeof(Ignore)) actualTypeCount = 15;
+
+                var actualResults = new object[16]
                 {
-                    var readMethod = GridReadMethods.GetOrAdd(types[i], type => GridReadMethodDefinition.MakeGenericMethod(type));
-                    actualResults[i] = readMethod.Invoke(reader, new object[] { true })!;
-                }
-                
-                // Create properly typed empty enumerables for ignored types
-                for (int i = actualTypeCount; i < 16; i++)
-                {
-                    var emptyMethod = EmptyMethods.GetOrAdd(types[i], type => EmptyMethodDefinition.MakeGenericMethod(type));
-                    actualResults[i] = emptyMethod.Invoke(null, null)!;
-                }
+                    Enumerable.Empty<T1>(),
+                    Enumerable.Empty<T2>(),
+                    Enumerable.Empty<T3>(),
+                    Enumerable.Empty<T4>(),
+                    Enumerable.Empty<T5>(),
+                    Enumerable.Empty<T6>(),
+                    Enumerable.Empty<T7>(),
+                    Enumerable.Empty<T8>(),
+                    Enumerable.Empty<T9>(),
+                    Enumerable.Empty<T10>(),
+                    Enumerable.Empty<T11>(),
+                    Enumerable.Empty<T12>(),
+                    Enumerable.Empty<T13>(),
+                    Enumerable.Empty<T14>(),
+                    Enumerable.Empty<T15>(),
+                    Enumerable.Empty<T16>()
+                };
+
+                if (actualTypeCount > 0) actualResults[0] = reader.Read<T1>(true);
+                if (actualTypeCount > 1) actualResults[1] = reader.Read<T2>(true);
+                if (actualTypeCount > 2) actualResults[2] = reader.Read<T3>(true);
+                if (actualTypeCount > 3) actualResults[3] = reader.Read<T4>(true);
+                if (actualTypeCount > 4) actualResults[4] = reader.Read<T5>(true);
+                if (actualTypeCount > 5) actualResults[5] = reader.Read<T6>(true);
+                if (actualTypeCount > 6) actualResults[6] = reader.Read<T7>(true);
+                if (actualTypeCount > 7) actualResults[7] = reader.Read<T8>(true);
+                if (actualTypeCount > 8) actualResults[8] = reader.Read<T9>(true);
+                if (actualTypeCount > 9) actualResults[9] = reader.Read<T10>(true);
+                if (actualTypeCount > 10) actualResults[10] = reader.Read<T11>(true);
+                if (actualTypeCount > 11) actualResults[11] = reader.Read<T12>(true);
+                if (actualTypeCount > 12) actualResults[12] = reader.Read<T13>(true);
+                if (actualTypeCount > 13) actualResults[13] = reader.Read<T14>(true);
+                if (actualTypeCount > 14) actualResults[14] = reader.Read<T15>(true);
+                if (actualTypeCount > 15) actualResults[15] = reader.Read<T16>(true);
                 
                 return map(
                     (IEnumerable<T1>)actualResults[0], 

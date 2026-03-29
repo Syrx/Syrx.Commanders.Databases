@@ -13,17 +13,6 @@ namespace Syrx.Commanders.Databases
     /// <typeparam name="TRepository">The repository type whose methods are resolved to configured database commands.</typeparam>
     public sealed partial class DatabaseCommander<TRepository> //: ICommander
     {
-        private static readonly MethodInfo GridReadAsyncMethodDefinition = typeof(SqlMapper.GridReader).GetMethods()
-            .Single(m =>
-                m.Name == "ReadAsync" &&
-                m.IsGenericMethodDefinition &&
-                m.GetParameters().Length == 1 &&
-                m.GetParameters()[0].ParameterType == typeof(bool));
-
-        private static readonly MethodInfo EmptyMethodDefinitionAsync = typeof(Enumerable).GetMethod(nameof(Enumerable.Empty))!;
-        private static readonly ConcurrentDictionary<Type, MethodInfo> GridReadAsyncMethods = new();
-        private static readonly ConcurrentDictionary<Type, MethodInfo> EmptyMethodsAsync = new();
-
         /// <summary>
         /// Asynchronously executes a multiple result set query using one type, combining the result sets with a mapping function to produce the final result.
         /// </summary>
@@ -474,7 +463,7 @@ namespace Syrx.Commanders.Databases
         /// This method uses Dapper's QueryMultipleAsync functionality to read multiple result sets from a single database query.
         /// It automatically detects the number of actual types by identifying <see cref="Ignore"/> placeholder types.
         /// For type parameters marked as <see cref="Ignore"/>, empty enumerables of the appropriate type are provided to the mapping function.
-        /// The method uses reflection to dynamically invoke the generic ReadAsync methods for each result set type.
+        /// The method uses strongly typed ReadAsync calls for each result set type.
         /// Each result set is read with buffering enabled (true) to ensure all data is materialized before proceeding to the next result set.
         /// </remarks>
         public async Task<IEnumerable<TResult>> QueryAsync<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TResult>(
@@ -491,26 +480,60 @@ namespace Syrx.Commanders.Databases
             {
                 var reader = await connection.QueryMultipleAsync(command);
                 
-                var types = new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7), typeof(T8), typeof(T9), typeof(T10), typeof(T11), typeof(T12), typeof(T13), typeof(T14), typeof(T15), typeof(T16) };
-                var actualTypeCount = types.TakeWhile(t => t != typeof(Ignore)).Count();
-                
-                // Read the actual result sets
-                var actualResults = new object[16];
-                for (int i = 0; i < actualTypeCount; i++)
+                var actualTypeCount = 16;
+                if (typeof(T1) == typeof(Ignore)) actualTypeCount = 0;
+                else if (typeof(T2) == typeof(Ignore)) actualTypeCount = 1;
+                else if (typeof(T3) == typeof(Ignore)) actualTypeCount = 2;
+                else if (typeof(T4) == typeof(Ignore)) actualTypeCount = 3;
+                else if (typeof(T5) == typeof(Ignore)) actualTypeCount = 4;
+                else if (typeof(T6) == typeof(Ignore)) actualTypeCount = 5;
+                else if (typeof(T7) == typeof(Ignore)) actualTypeCount = 6;
+                else if (typeof(T8) == typeof(Ignore)) actualTypeCount = 7;
+                else if (typeof(T9) == typeof(Ignore)) actualTypeCount = 8;
+                else if (typeof(T10) == typeof(Ignore)) actualTypeCount = 9;
+                else if (typeof(T11) == typeof(Ignore)) actualTypeCount = 10;
+                else if (typeof(T12) == typeof(Ignore)) actualTypeCount = 11;
+                else if (typeof(T13) == typeof(Ignore)) actualTypeCount = 12;
+                else if (typeof(T14) == typeof(Ignore)) actualTypeCount = 13;
+                else if (typeof(T15) == typeof(Ignore)) actualTypeCount = 14;
+                else if (typeof(T16) == typeof(Ignore)) actualTypeCount = 15;
+
+                var actualResults = new object[16]
                 {
-                    var readMethod = GridReadAsyncMethods.GetOrAdd(types[i], type => GridReadAsyncMethodDefinition.MakeGenericMethod(type));
-                    var taskResult = (Task)readMethod.Invoke(reader, new object[] { true })!;
-                    await taskResult;
-                    var resultProperty = taskResult.GetType().GetProperty("Result")!;
-                    actualResults[i] = resultProperty.GetValue(taskResult)!;
-                }
-                
-                // Create properly typed empty enumerables for ignored types
-                for (int i = actualTypeCount; i < 16; i++)
-                {
-                    var emptyMethod = EmptyMethodsAsync.GetOrAdd(types[i], type => EmptyMethodDefinitionAsync.MakeGenericMethod(type));
-                    actualResults[i] = emptyMethod.Invoke(null, null)!;
-                }
+                    Enumerable.Empty<T1>(),
+                    Enumerable.Empty<T2>(),
+                    Enumerable.Empty<T3>(),
+                    Enumerable.Empty<T4>(),
+                    Enumerable.Empty<T5>(),
+                    Enumerable.Empty<T6>(),
+                    Enumerable.Empty<T7>(),
+                    Enumerable.Empty<T8>(),
+                    Enumerable.Empty<T9>(),
+                    Enumerable.Empty<T10>(),
+                    Enumerable.Empty<T11>(),
+                    Enumerable.Empty<T12>(),
+                    Enumerable.Empty<T13>(),
+                    Enumerable.Empty<T14>(),
+                    Enumerable.Empty<T15>(),
+                    Enumerable.Empty<T16>()
+                };
+
+                if (actualTypeCount > 0) actualResults[0] = await reader.ReadAsync<T1>(true);
+                if (actualTypeCount > 1) actualResults[1] = await reader.ReadAsync<T2>(true);
+                if (actualTypeCount > 2) actualResults[2] = await reader.ReadAsync<T3>(true);
+                if (actualTypeCount > 3) actualResults[3] = await reader.ReadAsync<T4>(true);
+                if (actualTypeCount > 4) actualResults[4] = await reader.ReadAsync<T5>(true);
+                if (actualTypeCount > 5) actualResults[5] = await reader.ReadAsync<T6>(true);
+                if (actualTypeCount > 6) actualResults[6] = await reader.ReadAsync<T7>(true);
+                if (actualTypeCount > 7) actualResults[7] = await reader.ReadAsync<T8>(true);
+                if (actualTypeCount > 8) actualResults[8] = await reader.ReadAsync<T9>(true);
+                if (actualTypeCount > 9) actualResults[9] = await reader.ReadAsync<T10>(true);
+                if (actualTypeCount > 10) actualResults[10] = await reader.ReadAsync<T11>(true);
+                if (actualTypeCount > 11) actualResults[11] = await reader.ReadAsync<T12>(true);
+                if (actualTypeCount > 12) actualResults[12] = await reader.ReadAsync<T13>(true);
+                if (actualTypeCount > 13) actualResults[13] = await reader.ReadAsync<T14>(true);
+                if (actualTypeCount > 14) actualResults[14] = await reader.ReadAsync<T15>(true);
+                if (actualTypeCount > 15) actualResults[15] = await reader.ReadAsync<T16>(true);
                 
                 return map(
                     (IEnumerable<T1>)actualResults[0], 

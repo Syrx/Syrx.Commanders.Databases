@@ -142,8 +142,8 @@ Syrx explicit SQL only; each aggregate persistence via dedicated repository.
 ```csharp
 public interface IOrderRepository
 {
-	Task<Order?> GetAsync(Guid id, CancellationToken ct);
-	Task SaveAsync(Order order, CancellationToken ct);
+	Task<Order?> RetrieveAsync(Guid id, CancellationToken ct);
+	Task UpsertAsync(Order order, CancellationToken ct);
 }
 
 public sealed class OrderRepository : IOrderRepository
@@ -151,14 +151,14 @@ public sealed class OrderRepository : IOrderRepository
 	private readonly ICommander<IOrderRepository> _commander;
 	public OrderRepository(ICommander<IOrderRepository> commander) => _commander = commander;
 
-	public async Task<Order?> GetAsync(Guid id, CancellationToken ct)
+	public async Task<Order?> RetrieveAsync(Guid id, CancellationToken ct)
 	{
-		var cmd = CommandStrings.Order.GetById;
-		var data = await _commander.QueryAsync<OrderData>(cmd, new { Id = id }, ct);
-		return data?.ToDomain();
+		var cmd = CommandStrings.Order.RetrieveById;
+		var result = await _commander.QueryAsync<OrderData>(cmd, new { Id = id }, ct);
+		return result?.ToDomain();
 	}
 
-	public async Task SaveAsync(Order order, CancellationToken ct)
+	public async Task UpsertAsync(Order order, CancellationToken ct)
 	{
 		// Example: Upsert
 		var cmd = CommandStrings.Order.Upsert;

@@ -173,7 +173,7 @@ public class {className}
     
     private string GenerateProperty(Field field)
     {
-        var typeName = GetCSharpTypeName(field.DataType);
+        var typeName = RetrieveCSharpTypeName(field.DataType);
         return $"    public {typeName} {field.Name} {{ get; set; }}";
     }
 }
@@ -253,3 +253,6 @@ This project is licensed under the [MIT License](https://github.com/Syrx/Syrx/bl
 ## Credits
 
 Built as part of the Syrx data access framework to provide schema modeling capabilities for database-centric applications.
+
+
+

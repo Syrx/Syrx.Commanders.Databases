@@ -146,6 +146,8 @@ CommanderSettings
 
 ## Usage
 
+`Syrx.Commanders.Databases.Settings.Extensions` is the recommended way to author settings for application startup. The examples below include raw model construction and file formats to illustrate shape equivalence across sources.
+
 ### Basic Configuration
 
 ```csharp
@@ -171,7 +173,7 @@ var settings = new CommanderSettings
                     Name = "UserRepository",
                     Commands = new Dictionary<string, CommandSetting>
                     {
-                        ["GetByIdAsync"] = new CommandSetting
+                        ["RetrieveAsync"] = new CommandSetting
                         {
                             CommandText = "SELECT * FROM Users WHERE Id = @id",
                             ConnectionAlias = "DefaultConnection",
@@ -200,12 +202,12 @@ public class ConfigurationService
             new ConnectionStringSetting 
             { 
                 Alias = "Primary", 
-                ConnectionString = GetPrimaryConnectionString() 
+                ConnectionString = RetrievePrimaryConnectionString() 
             },
             new ConnectionStringSetting 
             { 
                 Alias = "ReadOnly", 
-                ConnectionString = GetReadOnlyConnectionString() 
+                ConnectionString = RetrieveReadOnlyConnectionString() 
             }
         };
         
@@ -234,7 +236,7 @@ public class ConfigurationService
         {
           "Name": "UserRepository",
           "Commands": {
-            "GetByIdAsync": {
+            "RetrieveAsync": {
               "CommandText": "SELECT * FROM Users WHERE Id = @id",
               "ConnectionAlias": "DefaultConnection",
               "CommandTimeout": 30,
@@ -265,7 +267,7 @@ public class ConfigurationService
         <TypeSetting>
           <Name>UserRepository</Name>
           <Commands>
-            <Command Key="GetByIdAsync">
+            <Command Key="RetrieveAsync">
               <CommandText>SELECT * FROM Users WHERE Id = @id</CommandText>
               <ConnectionAlias>DefaultConnection</ConnectionAlias>
               <CommandTimeout>30</CommandTimeout>
@@ -365,9 +367,9 @@ The settings classes use `required` properties and immutable records to ensure c
 ## Related Packages
 
 ### Configuration Extensions
-- **[Syrx.Commanders.Databases.Settings.Extensions](https://www.nuget.org/packages/Syrx.Commanders.Databases.Settings.Extensions/)**: Builder pattern extensions
-- **[Syrx.Commanders.Databases.Settings.Extensions.Json](https://www.nuget.org/packages/Syrx.Commanders.Databases.Settings.Extensions.Json/)**: JSON configuration support
-- **[Syrx.Commanders.Databases.Settings.Extensions.Xml](https://www.nuget.org/packages/Syrx.Commanders.Databases.Settings.Extensions.Xml/)**: XML configuration support
+- **[Syrx.Commanders.Databases.Settings.Extensions](https://www.nuget.org/packages/Syrx.Commanders.Databases.Settings.Extensions/)**: Recommended builder pattern extensions
+- **[Syrx.Commanders.Databases.Settings.Extensions.Json](https://www.nuget.org/packages/Syrx.Commanders.Databases.Settings.Extensions.Json/)**: Optional JSON configuration support
+- **[Syrx.Commanders.Databases.Settings.Extensions.Xml](https://www.nuget.org/packages/Syrx.Commanders.Databases.Settings.Extensions.Xml/)**: Optional XML configuration support
 
 ### Configuration Readers
 - **[Syrx.Commanders.Databases.Settings.Readers](https://www.nuget.org/packages/Syrx.Commanders.Databases.Settings.Readers/)**: Configuration file readers
@@ -384,3 +386,6 @@ This project is licensed under the [MIT License](https://github.com/Syrx/Syrx/bl
 ## Credits
 
 Built on top of [Dapper](https://github.com/DapperLib/Dapper) and standard .NET configuration patterns.
+
+
+

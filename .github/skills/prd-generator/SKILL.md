@@ -1,9 +1,6 @@
 ---
 name: prd-generator
-description: >
-  **SKILL** — Generate a comprehensive, traceable Product Requirements Document (PRD).
-  USE FOR: creating PRDs for new features, products, or epics; authoring user stories with testable acceptance criteria; producing GitHub issues from requirements; guided stakeholder interviews before writing begins.
-  DO NOT USE FOR: general coding questions; architecture decisions (use architecture-and-ddd agent); bug investigation (use debug agent).
+description: Use when creating comprehensive, traceable PRDs for features, products, or epics before implementation begins.
 ---
 
 # PRD Generator Skill

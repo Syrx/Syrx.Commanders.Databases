@@ -98,12 +98,12 @@ Create a JSON configuration file (`syrx.json`):
         {
           "Name": "UserRepository",
           "Commands": {
-            "GetByIdAsync": {
+            "RetrieveAsync": {
               "CommandText": "SELECT * FROM Users WHERE Id = @id",
               "ConnectionAlias": "DefaultConnection",
               "CommandTimeout": 30
             },
-            "GetAllAsync": {
+            "RetrieveAsync": {
               "CommandText": "SELECT * FROM Users",
               "ConnectionAlias": "DefaultConnection"
             }
@@ -206,11 +206,11 @@ The JSON configuration follows this structure:
         {
           "Name": "UserRepository",
           "Commands": {
-            "GetAllUsersAsync": {
+            "RetrieveAllUsersAsync": {
               "CommandText": "SELECT Id, Name, Email FROM Users",
               "ConnectionAlias": "Database"
             },
-            "GetUserByIdAsync": {
+            "RetrieveUserByIdAsync": {
               "CommandText": "SELECT Id, Name, Email FROM Users WHERE Id = @id",
               "ConnectionAlias": "Database",
               "CommandTimeout": 30
@@ -252,7 +252,7 @@ The JSON configuration follows this structure:
         {
           "Name": "UserRepository",
           "Commands": {
-            "GetUsersAsync": {
+            "RetrieveUsersAsync": {
               "CommandText": "SELECT * FROM Users",
               "ConnectionAlias": "UserDatabase"
             }
@@ -261,7 +261,7 @@ The JSON configuration follows this structure:
         {
           "Name": "ProductRepository", 
           "Commands": {
-            "GetProductsAsync": {
+            "RetrieveProductsAsync": {
               "CommandText": "SELECT * FROM Products",
               "ConnectionAlias": "ProductDatabase"
             }
@@ -270,7 +270,7 @@ The JSON configuration follows this structure:
         {
           "Name": "OrderRepository",
           "Commands": {
-            "GetOrdersAsync": {
+            "RetrieveOrdersAsync": {
               "CommandText": "SELECT * FROM Orders",
               "ConnectionAlias": "OrderDatabase"
             }
@@ -303,7 +303,7 @@ The JSON configuration follows this structure:
         {
           "Name": "OrderRepository",
           "Commands": {
-            "GetOrdersWithDetailsAsync": {
+            "RetrieveOrdersWithDetailsAsync": {
               "CommandText": "SELECT o.*, c.*, oi.*, p.* FROM Orders o JOIN Customers c ON o.CustomerId = c.Id JOIN OrderItems oi ON o.Id = oi.OrderId JOIN Products p ON oi.ProductId = p.Id WHERE o.OrderDate >= @fromDate",
               "ConnectionAlias": "ReadOnly",
               "CommandTimeout": 60,
@@ -316,7 +316,7 @@ The JSON configuration follows this structure:
               "CommandTimeout": 300,
               "IsolationLevel": "Serializable"
             },
-            "GetOrderStatisticsAsync": {
+            "RetrieveOrderStatisticsAsync": {
               "CommandText": "SELECT COUNT(*) as TotalOrders, SUM(Total) as TotalAmount FROM Orders WHERE OrderDate >= @fromDate",
               "ConnectionAlias": "ReadOnly",
               "CommandTimeout": 45
@@ -398,35 +398,35 @@ public class UserRepository
     }
     
     // Method names automatically map to JSON configuration commands
-    public async Task<IEnumerable<User>> GetAllUsersAsync()
+    public async Task<IEnumerable<User>> RetrieveAllUsersAsync(CancellationToken cancellationToken = default)
     {
-        return await _commander.QueryAsync<User>();
+      return await _commander.QueryAsync<User>(cancellationToken: cancellationToken);
     }
     
-    public async Task<User> GetUserByIdAsync(int id)
+    public async Task<User> RetrieveUserByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        var users = await _commander.QueryAsync<User>(new { id });
-        return users.FirstOrDefault();
+      var result = await _commander.QueryAsync<User>(new { id }, cancellationToken);
+        return result.FirstOrDefault();
     }
     
-    public async Task<User> CreateUserAsync(User user)
+    public async Task<User> CreateUserAsync(User user, CancellationToken cancellationToken = default)
     {
-        return await _commander.ExecuteAsync(user) ? user : default;
+      return await _commander.ExecuteAsync(user, cancellationToken) ? user : default;
     }
     
-    public async Task<User> UpdateUserAsync(User user)
+    public async Task<User> UpdateUserAsync(User user, CancellationToken cancellationToken = default)
     {
-        return await _commander.ExecuteAsync(user) ? user : default;
+      return await _commander.ExecuteAsync(user, cancellationToken) ? user : default;
     }
     
-    public async Task<User> DeleteUserAsync(User user)
+    public async Task<User> DeleteUserAsync(User user, CancellationToken cancellationToken = default)
     {
-        return await _commander.ExecuteAsync(user) ? user : default;
+      return await _commander.ExecuteAsync(user, cancellationToken) ? user : default;
     }
 }
 ```
 
-> **Important**: Method names like `GetAllUsersAsync` automatically map to command configurations in your JSON file via the pattern: `{Namespace}.{ClassName}.{MethodName}`
+> **Important**: Method names like `RetrieveAllUsersAsync` automatically map to command configurations in your JSON file via the pattern: `{Namespace}.{ClassName}.{MethodName}`
 
 ## Integration Examples
 
@@ -481,7 +481,7 @@ class Program
         
         // Use the configured repository
         var userRepository = provider.GetRequiredService<UserRepository>();
-        var users = await userRepository.GetAllUsersAsync();
+        var users = await userRepository.RetrieveAllUsersAsync();
         
         foreach (var user in users)
         {
@@ -512,3 +512,6 @@ This project is licensed under the [MIT License](https://github.com/Syrx/Syrx/bl
 ## Credits
 
 Built on top of [System.Text.Json](https://www.nuget.org/packages/System.Text.Json/) and [Dapper](https://github.com/DapperLib/Dapper).
+
+
+

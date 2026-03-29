@@ -1,9 +1,6 @@
 ---
 name: security-research
-description: >
-  **SKILL** - Perform research-only .NET/C# security assessments and produce detailed remediation reports without implementing fixes.
-  USE FOR: vulnerability reviews, secure coding posture assessment, dependency and configuration risk analysis, and evidence-backed remediation reporting.
-  DO NOT USE FOR: implementing code changes, broad feature development, or speculative findings without evidence.
+description: Use when performing research-only .NET and C# security assessments with evidence-backed remediation reporting.
 ---
 
 # Security Research Skill

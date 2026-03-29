@@ -1,9 +1,6 @@
 ---
 name: critical-thinking
-description: >
-  **SKILL** - Challenge assumptions, pressure-test design choices, and ask one focused question at a time.
-  USE FOR: architecture trade-offs, requirement clarity, root-cause reasoning, and option evaluation.
-  DO NOT USE FOR: direct implementation when execution is already clear.
+description: Use when pressure-testing assumptions, clarifying requirements, and evaluating trade-offs before implementation.
 ---
 
 # Critical Thinking Skill

@@ -1,6 +1,24 @@
 # API Reference
 
-Complete API reference for the Syrx.Commanders.Databases framework.
+**This page is now supplemented by comprehensive reference documentation.**
+
+👉 **Start here**: [Complete Reference Documentation](reference/index.md)
+
+---
+
+## Quick Navigation
+
+- **New Users**: [Getting Started Guide](reference/getting-started.md)
+- **Architecture Deep-Dives**: [Architecture Overview](reference/architecture/index.md)
+- **Configuration Reference**: [All Formats](reference/configuration/index.md)
+- **Project-by-Project Docs**: [Project Reference](reference/projects/index.md)
+- **Coverage & Metrics**: [Coverage Report](reference/coverage-report.md)
+
+---
+
+## Legacy API Quick Reference
+
+Below is the original quick reference. For comprehensive, up-to-date API documentation, **visit the [Reference Documentation](reference/index.md) instead**.
 
 ## Core Interfaces
 
@@ -359,34 +377,48 @@ public class UserRepository
     }
     
     // Simple query
-    public async Task<User> GetByIdAsync(int id)
+    public async Task<User> RetrieveAsync(int id, CancellationToken cancellationToken = default)
     {
-        var users = await _commander.QueryAsync<User>(new { id });
-        return users.FirstOrDefault();
+        var result = await _commander.QueryAsync<User>(new { id }, cancellationToken);
+        return result.FirstOrDefault();
     }
     
     // Multi-mapping query
-    public async Task<IEnumerable<User>> GetUsersWithProfilesAsync()
+    public async Task<IEnumerable<User>> RetrieveWithProfilesAsync(CancellationToken cancellationToken = default)
     {
         return await _commander.QueryAsync<User, Profile, User>(
             (user, profile) => 
             {
                 user.Profile = profile;
                 return user;
-            });
+            },
+            cancellationToken: cancellationToken);
     }
     
     // Execute operation
-    public async Task<User> CreateUserAsync(User user)
+    public async Task<User> CreateUserAsync(User user, CancellationToken cancellationToken = default)
     {
-        return await _commander.ExecuteAsync(user) ? user : null;
+        return await _commander.ExecuteAsync(user, cancellationToken) ? user : null;
     }
 }
 ```
 
 ### Configuration Patterns
 
-#### JSON Configuration
+#### Programmatic Configuration (Recommended)
+
+```csharp
+var settings = new CommanderSettingsBuilder()
+    .AddConnectionString("Default", connectionString)
+    .AddNamespace("MyApp.Repositories", ns => ns
+        .AddType("UserRepository", type => type
+            .AddCommand("RetrieveAsync", cmd => cmd
+                .UseCommandText("SELECT * FROM Users WHERE Id = @id")
+                .UseConnectionAlias("Default"))))
+    .Build();
+```
+
+#### JSON Configuration (Optional)
 ```json
 {
   "Connections": [
@@ -402,7 +434,7 @@ public class UserRepository
         {
           "Name": "UserRepository",
           "Commands": {
-            "GetByIdAsync": {
+            "RetrieveAsync": {
               "CommandText": "SELECT * FROM Users WHERE Id = @id",
               "ConnectionAlias": "Default"
             }
@@ -414,32 +446,20 @@ public class UserRepository
 }
 ```
 
-#### Programmatic Configuration
-```csharp
-var settings = new CommanderSettingsBuilder()
-    .AddConnectionString("Default", connectionString)
-    .AddNamespace("MyApp.Repositories", ns => ns
-        .AddType("UserRepository", type => type
-            .AddCommand("GetByIdAsync", cmd => cmd
-                .UseCommandText("SELECT * FROM Users WHERE Id = @id")
-                .UseConnectionAlias("Default"))))
-    .Build();
-```
-
 ### Service Registration Patterns
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
-    // Method 1: Using JSON configuration
-    var configBuilder = new ConfigurationBuilder();
-    services.UseSyrx(builder => builder
-        .UseFile("syrx.json", configBuilder));
-    
-    // Method 2: Using programmatic configuration
+    // Method 1 (recommended): using programmatic configuration
     services.AddSingleton<ICommanderSettings>(settings);
     services.AddDatabaseCommander<UserRepository>();
     services.AddDatabaseConnector<SqlServerDatabaseConnector>();
+
+    // Method 2 (optional): using JSON configuration
+    var configBuilder = new ConfigurationBuilder();
+    services.UseSyrx(builder => builder
+        .UseFile("syrx.json", configBuilder));
     
     // Register repositories
     services.AddScoped<UserRepository>();
@@ -461,7 +481,7 @@ public void ConfigureServices(IServiceCollection services)
 ```csharp
 try
 {
-    var user = await _commander.QueryAsync<User>(new { id });
+    var result = await _commander.QueryAsync<User>(new { id });
 }
 catch (InvalidOperationException ex)
 {
@@ -503,3 +523,6 @@ catch (TimeoutException ex)
 5. Use async methods consistently
 
 For more detailed information, see the individual package documentation linked throughout this reference.
+
+
+

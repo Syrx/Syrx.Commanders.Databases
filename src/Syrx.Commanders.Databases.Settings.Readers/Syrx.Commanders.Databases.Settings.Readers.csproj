@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<Description>This package adds support for reading settings for Database Commanders from configuration sources.</Description>
 		<PackageTags>syrx;data access;orm;micro-orm</PackageTags>
@@ -17,6 +17,10 @@
 			<PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
+
+
+	<ItemGroup>
+</ItemGroup>
 
 
 	<ItemGroup>

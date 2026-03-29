@@ -55,7 +55,7 @@ public void ConfigureServices(IServiceCollection services)
         .UseSqlServer(sqlServer => sqlServer
             .AddConnectionString("DefaultConnection", connectionString)
             .AddCommand<UserRepository>(commands => commands
-                .ForMethod(nameof(UserRepository.GetByIdAsync), command => command
+                .ForMethod(nameof(UserRepository.RetrieveAsync), command => command
                     .UseConnectionAlias("DefaultConnection")
                     .UseCommandText("SELECT * FROM Users WHERE Id = @id")))));
     
@@ -78,11 +78,11 @@ public class UserRepository
         _commander = commander;
     }
     
-    public async Task<User> GetByIdAsync(int id)
-        => await _commander.QueryAsync<User>(new { id }).SingleOrDefaultAsync();
+    public async Task<User> RetrieveAsync(int id, CancellationToken cancellationToken = default)
+        => (await _commander.QueryAsync<User>(new { id }, cancellationToken)).FirstOrDefault();
         
-    public async Task<User> CreateUserAsync(User user)
-        => await _commander.ExecuteAsync(user) ? user : default;
+    public async Task<User> CreateUserAsync(User user, CancellationToken cancellationToken = default)
+        => await _commander.ExecuteAsync(user, cancellationToken) ? user : default;
 }
 ```
 
@@ -115,3 +115,6 @@ This project is licensed under the [MIT License](https://github.com/Syrx/Syrx/bl
 ## Credits
 
 Provides dependency injection support for internal Syrx framework components.
+
+
+

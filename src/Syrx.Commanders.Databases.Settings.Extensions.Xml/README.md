@@ -99,12 +99,12 @@ Create an XML configuration file (`syrx.xml`):
         <TypeSetting>
           <Name>UserRepository</Name>
           <Commands>
-            <Command Key="GetByIdAsync">
+            <Command Key="RetrieveAsync">
               <CommandText>SELECT * FROM Users WHERE Id = @id</CommandText>
               <ConnectionAlias>DefaultConnection</ConnectionAlias>
               <CommandTimeout>30</CommandTimeout>
             </Command>
-            <Command Key="GetAllAsync">
+            <Command Key="RetrieveAsync">
               <CommandText>SELECT * FROM Users</CommandText>
               <ConnectionAlias>DefaultConnection</ConnectionAlias>
             </Command>
@@ -197,11 +197,11 @@ The XML configuration follows this structure with proper namespace support:
         <TypeSetting>
           <Name>UserRepository</Name>
           <Commands>
-            <Command Key="GetAllUsersAsync">
+            <Command Key="RetrieveAllUsersAsync">
               <CommandText>SELECT Id, Name, Email FROM Users</CommandText>
               <ConnectionAlias>Database</ConnectionAlias>
             </Command>
-            <Command Key="GetUserByIdAsync">
+            <Command Key="RetrieveUserByIdAsync">
               <CommandText>SELECT Id, Name, Email FROM Users WHERE Id = @id</CommandText>
               <ConnectionAlias>Database</ConnectionAlias>
               <CommandTimeout>30</CommandTimeout>
@@ -244,7 +244,7 @@ The XML configuration follows this structure with proper namespace support:
         <TypeSetting>
           <Name>UserRepository</Name>
           <Commands>
-            <Command Key="GetUsersAsync">
+            <Command Key="RetrieveUsersAsync">
               <CommandText>SELECT * FROM Users</CommandText>
               <ConnectionAlias>UserDatabase</ConnectionAlias>
             </Command>
@@ -253,7 +253,7 @@ The XML configuration follows this structure with proper namespace support:
         <TypeSetting>
           <Name>ProductRepository</Name>
           <Commands>
-            <Command Key="GetProductsAsync">
+            <Command Key="RetrieveProductsAsync">
               <CommandText>SELECT * FROM Products</CommandText>
               <ConnectionAlias>ProductDatabase</ConnectionAlias>
             </Command>
@@ -262,7 +262,7 @@ The XML configuration follows this structure with proper namespace support:
         <TypeSetting>
           <Name>OrderRepository</Name>
           <Commands>
-            <Command Key="GetOrdersAsync">
+            <Command Key="RetrieveOrdersAsync">
               <CommandText>SELECT * FROM Orders</CommandText>
               <ConnectionAlias>OrderDatabase</ConnectionAlias>
             </Command>
@@ -296,7 +296,7 @@ The XML configuration follows this structure with proper namespace support:
         <TypeSetting>
           <Name>OrderRepository</Name>
           <Commands>
-            <Command Key="GetOrdersWithDetailsAsync">
+            <Command Key="RetrieveOrdersWithDetailsAsync">
               <CommandText><![CDATA[
                 SELECT o.*, c.*, oi.*, p.*
                 FROM Orders o
@@ -316,7 +316,7 @@ The XML configuration follows this structure with proper namespace support:
               <CommandTimeout>300</CommandTimeout>
               <IsolationLevel>Serializable</IsolationLevel>
             </Command>
-            <Command Key="GetOrderStatisticsAsync">
+            <Command Key="RetrieveOrderStatisticsAsync">
               <CommandText><![CDATA[
                 SELECT COUNT(*) as TotalOrders, SUM(Total) as TotalAmount
                 FROM Orders
@@ -398,35 +398,35 @@ public class UserRepository
     }
     
     // Method names automatically map to XML configuration commands
-    public async Task<IEnumerable<User>> GetAllUsersAsync()
+    public async Task<IEnumerable<User>> RetrieveAllUsersAsync(CancellationToken cancellationToken = default)
     {
-        return await _commander.QueryAsync<User>();
+      return await _commander.QueryAsync<User>(cancellationToken: cancellationToken);
     }
     
-    public async Task<User> GetUserByIdAsync(int id)
+    public async Task<User> RetrieveUserByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        var users = await _commander.QueryAsync<User>(new { id });
-        return users.FirstOrDefault();
+      var result = await _commander.QueryAsync<User>(new { id }, cancellationToken);
+        return result.FirstOrDefault();
     }
     
-    public async Task<User> CreateUserAsync(User user)
+    public async Task<User> CreateUserAsync(User user, CancellationToken cancellationToken = default)
     {
-        return await _commander.ExecuteAsync(user) ? user : default;
+      return await _commander.ExecuteAsync(user, cancellationToken) ? user : default;
     }
     
-    public async Task<User> UpdateUserAsync(User user)
+    public async Task<User> UpdateUserAsync(User user, CancellationToken cancellationToken = default)
     {
-        return await _commander.ExecuteAsync(user) ? user : default;
+      return await _commander.ExecuteAsync(user, cancellationToken) ? user : default;
     }
     
-    public async Task<User> DeleteUserAsync(int id)
+    public async Task<User> DeleteUserAsync(int id, CancellationToken cancellationToken = default)
     {
-        return await _commander.ExecuteAsync(new { id }) ? new User { Id = id } : default;
+      return await _commander.ExecuteAsync(new { id }, cancellationToken) ? new User { Id = id } : default;
     }
 }
 ```
 
-> **Important**: Method names like `GetAllUsersAsync` automatically map to command configurations in your XML file via the pattern: `{Namespace}.{ClassName}.{MethodName}`
+> **Important**: Method names like `RetrieveAllUsersAsync` automatically map to command configurations in your XML file via the pattern: `{Namespace}.{ClassName}.{MethodName}`
 
 ## Integration Examples
 
@@ -481,7 +481,7 @@ class Program
         
         // Use the configured repository
         var userRepository = provider.GetRequiredService<UserRepository>();
-        var users = await userRepository.GetAllUsersAsync();
+        var users = await userRepository.RetrieveAllUsersAsync();
         
         foreach (var user in users)
         {
@@ -512,3 +512,6 @@ This project is licensed under the [MIT License](https://github.com/Syrx/Syrx/bl
 ## Credits
 
 Built on top of [System.Xml](https://docs.microsoft.com/en-us/dotnet/api/system.xml) and [Dapper](https://github.com/DapperLib/Dapper).
+
+
+

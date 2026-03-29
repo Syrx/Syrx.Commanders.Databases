@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<Description>This package hosts extension methods to simplify dependency injection using the IServiceCollection. </Description>
 		<PackageTags>syrx;data access;dapper;orm;micro-orm</PackageTags>
@@ -18,6 +18,9 @@
 			<PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
+
+	<ItemGroup>
+</ItemGroup>
 
 	<ItemGroup>
 	  <PackageReference Update="DotNet.ReproducibleBuilds" Version="2.0.2" />

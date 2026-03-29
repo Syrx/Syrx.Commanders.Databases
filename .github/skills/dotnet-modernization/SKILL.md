@@ -1,9 +1,6 @@
 ---
 name: dotnet-modernization
-description: >
-  **SKILL** - Modernize and clean up .NET code without changing behavior unnecessarily.
-  USE FOR: nullable adoption, obsolete API replacement, async cleanup, warning reduction, and codebase hygiene.
-  DO NOT USE FOR: broad rewrites or speculative architecture changes.
+description: Use when modernizing .NET code with safe, behavior-preserving improvements such as nullable adoption and obsolete API cleanup.
 ---
 
 # .NET Modernization Skill
