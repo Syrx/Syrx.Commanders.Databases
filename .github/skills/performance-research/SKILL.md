@@ -1,9 +1,6 @@
 ---
 name: performance-research
-description: >
-  **SKILL** - Perform research-only .NET/C# performance assessments and produce detailed remediation reports without implementing fixes.
-  USE FOR: bottleneck reviews, scalability risk analysis, async and allocation investigations, and evidence-backed performance reporting.
-  DO NOT USE FOR: implementing code changes, speculative optimization, or benchmark claims without measurement context.
+description: Use when performing research-only .NET and C# performance assessments with evidence-backed remediation reporting.
 ---
 
 # Performance Research Skill

@@ -111,8 +111,8 @@ public class UserRepository
 
     public async Task<User> RetrieveAsync(int id, CancellationToken cancellationToken = default)
     {
-        var users = await _commander.QueryAsync<User>(new { id }, cancellationToken);
-        return users.FirstOrDefault();
+        var result = await _commander.QueryAsync<User>(new { id }, cancellationToken);
+        return result.FirstOrDefault();
     }
 }
 ```
@@ -132,8 +132,8 @@ public async Task<IEnumerable<User>> RetrieveAllAsync(
 // Parameterized query
 public async Task<User> RetrieveByEmailAsync(string email, CancellationToken cancellationToken = default)
 {
-    var users = await _commander.QueryAsync<User>(new { email }, cancellationToken);
-    return users.FirstOrDefault();
+    var result = await _commander.QueryAsync<User>(new { email }, cancellationToken);
+    return result.FirstOrDefault();
 }
 
 // Complex query with multiple parameters
@@ -294,7 +294,7 @@ The DatabaseCommander provides comprehensive error handling:
 ```csharp
 try
 {
-    var user = await _commander.QueryAsync<User>(new { id });
+    var result = await _commander.QueryAsync<User>(new { id });
 }
 catch (InvalidOperationException ex)
 {
@@ -331,8 +331,8 @@ return await _commander.QueryAsync<User>(new { email, isActive = true });
 // Good: Use async methods consistently
 public async Task<User> RetrieveUserAsync(int id, CancellationToken cancellationToken = default)
 {
-    var users = await _commander.QueryAsync<User>(new { id }, cancellationToken);
-    return users.FirstOrDefault();
+    var result = await _commander.QueryAsync<User>(new { id }, cancellationToken);
+    return result.FirstOrDefault();
 }
 ```
 

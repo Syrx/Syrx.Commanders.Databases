@@ -2,19 +2,12 @@
 
 name: publish
 on:
-  workflow_dispatch: # Allow running the workflow manually from the GitHub UI
-  push:
-    branches:
-      - 'main'       # Run the workflow when pushing to the main branch
-  pull_request:
-    branches:
-      - '*'          # Run the workflow for all pull requests
   release:
     types:
       - published    # Run the workflow when a new GitHub release is published
 
 env:
-  NuGetDirectory: ${{ github.workspace }}/src/*/bin/Release/
+  NuGetDirectory: ${{ github.workspace }}/artifacts/nuget
 
 permissions: {}
 
@@ -34,7 +27,7 @@ jobs:
     - name: Update Git submodules
       run: git submodule update --init --recursive
     - name: Run documentation metrics
-      run: ./scripts/Get-DocumentationMetrics.ps1 -MinimumScore 85 -EnforceMinimum -OutputJsonPath ./.docs/reports/documentation-metrics.json
+      run: ./.github/skills/msdn-documentation/Get-DocumentationMetrics.ps1 -MinimumScore 85 -EnforceMinimum -OutputJsonPath ./.docs/reports/documentation-metrics.json
     - name: Upload documentation metrics artifact
       uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
       with:
@@ -44,6 +37,7 @@ jobs:
         path: ./.docs/reports/documentation-metrics.json
 
   create_nuget:
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     needs: [ documentation_quality ]
     permissions:
@@ -65,8 +59,9 @@ jobs:
       name: Display dotnet version
       #run: dotnet --version
       
-    # Create the NuGet package in the folder from the environment variable NuGetDirectory
-    - run: dotnet build --configuration Release
+    # Create NuGet packages in a deterministic artifact directory.
+    - name: Pack NuGet packages
+      run: dotnet pack --configuration Release --output "${{ env.NuGetDirectory }}"
 
     # Publish the NuGet package as an artifact, so they can be used in the following jobs
     - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
@@ -77,6 +72,7 @@ jobs:
         path: ${{ env.NuGetDirectory }}/*.nupkg
 
   validate_nuget:
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     needs: [ create_nuget ]
     steps:

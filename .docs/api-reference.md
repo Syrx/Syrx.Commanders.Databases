@@ -379,8 +379,8 @@ public class UserRepository
     // Simple query
     public async Task<User> RetrieveAsync(int id, CancellationToken cancellationToken = default)
     {
-        var users = await _commander.QueryAsync<User>(new { id }, cancellationToken);
-        return users.FirstOrDefault();
+        var result = await _commander.QueryAsync<User>(new { id }, cancellationToken);
+        return result.FirstOrDefault();
     }
     
     // Multi-mapping query
@@ -481,7 +481,7 @@ public void ConfigureServices(IServiceCollection services)
 ```csharp
 try
 {
-    var user = await _commander.QueryAsync<User>(new { id });
+    var result = await _commander.QueryAsync<User>(new { id });
 }
 catch (InvalidOperationException ex)
 {

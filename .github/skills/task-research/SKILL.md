@@ -1,6 +1,6 @@
 ---
 name: task-research
-description: 'Task research specialist for comprehensive project analysis - Brought to you by microsoft/edge-ai'
+description: Use when comprehensive project research is needed before planning or implementation decisions.
 ---
 
 # Task Researcher Instructions

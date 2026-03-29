@@ -70,9 +70,9 @@ namespace MyApp.Data
         
         public async Task<User?> RetrieveAsync(int id, CancellationToken cancellationToken = default)
         {
-            var users = await _commander.QueryAsync<User>(new { id }, cancellationToken);
+            var result = await _commander.QueryAsync<User>(new { id }, cancellationToken);
 
-            return users.FirstOrDefault();
+            return result.FirstOrDefault();
         }
         
         public async Task<IEnumerable<User>> RetrieveAllAsync(

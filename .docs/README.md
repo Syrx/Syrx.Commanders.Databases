@@ -88,8 +88,8 @@ public class UserRepository
     // Method name automatically maps to configured command
     public async Task<User> RetrieveAsync(int id, CancellationToken cancellationToken = default)
     {
-      var users = await _commander.QueryAsync<User>(new { id }, cancellationToken);
-        return users.FirstOrDefault();
+      var result = await _commander.QueryAsync<User>(new { id }, cancellationToken);
+      return result.FirstOrDefault();
     }
 }
 ```
@@ -268,8 +268,8 @@ public class UserRepository
     
     public async Task<User> RetrieveAsync(int id, CancellationToken cancellationToken = default)
     {
-      var users = await _commander.QueryAsync<User>(new { id }, cancellationToken);
-        return users.FirstOrDefault();
+      var result = await _commander.QueryAsync<User>(new { id }, cancellationToken);
+        return result.FirstOrDefault();
     }
     
     public async Task<User> CreateUserAsync(User user, CancellationToken cancellationToken = default)
@@ -352,7 +352,7 @@ Commands are cached using thread-safe `ConcurrentDictionary` with the pattern `{
 
 ```csharp
 // Cached lookup - subsequent calls are extremely fast
-var command = await _commander.QueryAsync<User>(new { id = 123 });
+var result = await _commander.QueryAsync<User>(new { id = 123 });
 ```
 
 #### Connection String Caching
@@ -559,8 +559,8 @@ public async Task<User> RetrieveUserAsync(int id)
 // Syrx
 public async Task<User> RetrieveUserAsync(int id)
 {
-    var users = await _commander.QueryAsync<User>(new { id });
-    return users.FirstOrDefault();
+    var result = await _commander.QueryAsync<User>(new { id });
+    return result.FirstOrDefault();
 }
 ```
 
@@ -578,8 +578,8 @@ public async Task<User> RetrieveUserAsync(int id)
 // Syrx
 public async Task<User> RetrieveUserAsync(int id)
 {
-    var users = await _commander.QueryAsync<User>(new { id });
-    return users.FirstOrDefault();
+    var result = await _commander.QueryAsync<User>(new { id });
+    return result.FirstOrDefault();
 }
 ```
 

@@ -1,9 +1,6 @@
 ---
 name: msdn-documentation
-description: >
-  **SKILL** - Produce reliable, MSDN-style Markdown documentation for GitHub repositories with full-workspace coverage, link integrity checks, and code-verified content.
-  USE FOR: repository documentation generation, documentation refresh/review, API and component reference docs, and structure-aligned documentation trees.
-  DO NOT USE FOR: implementing product features, speculative architecture changes, or writing claims not grounded in code evidence.
+description: Use when generating or refreshing MSDN-style repository documentation with code-verified content and link integrity checks.
 ---
 
 # MSDN Documentation Skill
@@ -92,9 +89,29 @@ Before finalizing documentation, enforce all gates:
 
 - Evidence Gate: Every technical claim maps to actual code or existing docs.
 - Drift Gate: Remove or correct stale statements contradicted by code.
-- Coverage Gate: Attempt to document every file in scope; explicitly justify exclusions.
+- Coverage Gate: Attempt to document every file in scope; explicitly justify exclusions. Run [`Get-DocumentationMetrics.ps1`](./Get-DocumentationMetrics.ps1) to measure XML doc coverage and README coverage objectively.
 - Link Gate: Validate that every internal link target exists.
 - Consistency Gate: Terminology is aligned with code symbols and established naming.
+
+### Documentation Metrics Script
+
+[`Get-DocumentationMetrics.ps1`](./Get-DocumentationMetrics.ps1) measures documentation quality across the solution:
+
+- **XML documentation coverage**: percentage of public C# declarations with `///` XML doc comments.
+- **README coverage**: percentage of `src/` projects with a `README.md`.
+- **Composite score**: weighted result from both metrics.
+
+Usage:
+
+```powershell
+# Check current coverage (default minimum: 80)
+./.github/skills/msdn-documentation/Get-DocumentationMetrics.ps1
+
+# Enforce a minimum score and export metrics as JSON
+./.github/skills/msdn-documentation/Get-DocumentationMetrics.ps1 -MinimumScore 85 -EnforceMinimum -OutputJsonPath ./.docs/reports/doc-metrics.json
+```
+
+The CI/CD pipeline runs this script with `-EnforceMinimum` on every push and pull request. Documentation work is blocked from merging if the composite score falls below the configured threshold.
 
 ## Workspace Coverage Rules
 
@@ -143,3 +160,4 @@ Documentation work is complete only when:
 - Coverage report explains included and excluded files.
 - Internal links resolve to existing docs.
 - No unresolved evidence gaps remain without explicit note.
+- [`Get-DocumentationMetrics.ps1`](./Get-DocumentationMetrics.ps1) passes at the configured minimum score (default: 80; CI enforces 85).

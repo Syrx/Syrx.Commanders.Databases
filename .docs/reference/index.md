@@ -68,8 +68,8 @@ public class UserRepository
     
     public async Task<User?> RetrieveAsync(int id, CancellationToken cancellationToken = default)
     {
-      var users = await _commander.QueryAsync<User>(new { id }, cancellationToken);
-        return users.FirstOrDefault();
+      var result = await _commander.QueryAsync<User>(new { id }, cancellationToken);
+        return result.FirstOrDefault();
     }
 }
 ```
@@ -101,7 +101,7 @@ Database commands are externalized from code using **namespace.type.method** res
 ### Multi-Mapping & Complex Queries
 ```csharp
 // Query with multi-mapping (e.g., Users joined with Profiles)
-var users = await _commander.QueryAsync<User, Profile, UserWithProfile>(
+var result = await _commander.QueryAsync<User, Profile, UserWithProfile>(
     (user, profile) => new UserWithProfile { User = user, Profile = profile },
     parameters: new { isActive = true }
 );

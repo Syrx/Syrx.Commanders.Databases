@@ -405,8 +405,8 @@ public class UserRepository
     
     public async Task<User> RetrieveUserByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-      var users = await _commander.QueryAsync<User>(new { id }, cancellationToken);
-        return users.FirstOrDefault();
+      var result = await _commander.QueryAsync<User>(new { id }, cancellationToken);
+        return result.FirstOrDefault();
     }
     
     public async Task<User> CreateUserAsync(User user, CancellationToken cancellationToken = default)

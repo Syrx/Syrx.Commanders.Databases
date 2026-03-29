@@ -154,8 +154,8 @@ public sealed class OrderRepository : IOrderRepository
 	public async Task<Order?> RetrieveAsync(Guid id, CancellationToken ct)
 	{
 		var cmd = CommandStrings.Order.RetrieveById;
-		var data = await _commander.QueryAsync<OrderData>(cmd, new { Id = id }, ct);
-		return data?.ToDomain();
+		var result = await _commander.QueryAsync<OrderData>(cmd, new { Id = id }, ct);
+		return result?.ToDomain();
 	}
 
 	public async Task UpsertAsync(Order order, CancellationToken ct)

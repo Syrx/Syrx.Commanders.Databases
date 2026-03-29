@@ -157,9 +157,9 @@ Task<bool> ExecuteAsync<TResult>(
 
 ```csharp
 // Repository usage:
-var success = await _commander.ExecuteAsync(user);
+var result = await _commander.ExecuteAsync(user);
 
-if (success)
+if (result)
 {
     // Command executed and affected rows
     return user;
@@ -240,8 +240,8 @@ public async Task<bool> CreateUserWithProfileAsync(User user)
 ```csharp
 try
 {
-    var success = await _commander.ExecuteAsync(user);
-    return success;
+    var result = await _commander.ExecuteAsync(user);
+    return result;
 }
 catch (SqlException ex) when (ex.Number == 2627)  // Unique constraint
 {
@@ -290,10 +290,10 @@ using (var scope = new TransactionScope(
         IsolationLevel = System.Transactions.IsolationLevel.Serializable 
     }))
 {
-    var result1 = await _commander.ExecuteAsync(user);  // Participates in ambient transaction
+    var result = await _commander.ExecuteAsync(user);  // Participates in ambient transaction
     var result2 = await _commander_db2.ExecuteAsync(entity);  // Another database
     
-    if (result1 && result2)
+    if (result && result2)
     {
         scope.Complete();  // Commits both
     }

@@ -1,9 +1,6 @@
 ---
 name: adr-generator
-description: >
-  **SKILL** - Create clear Architectural Decision Records in `.docs/adr` with explicit rationale, consequences, and alternatives.
-  USE FOR: architectural decisions, pattern selection, boundary definition, and integration choices.
-  DO NOT USE FOR: general coding work that does not need a recorded decision.
+description: Use when documenting architectural decisions in .docs/adr with explicit rationale, alternatives, and consequences.
 ---
 
 # ADR Generator Skill

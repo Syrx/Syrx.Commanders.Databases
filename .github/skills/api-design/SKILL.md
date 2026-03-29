@@ -1,9 +1,6 @@
 ---
 name: api-design
-description: >
-  **SKILL** - Design resilient API clients and service integrations with clear layering and policy-based resilience.
-  USE FOR: external HTTP integrations, DTO design, retries, backoff, circuit breakers, and API client abstractions.
-  DO NOT USE FOR: general .NET coding tasks unrelated to integration boundaries.
+description: Use when designing external API integrations with resilient client patterns, DTO contracts, and clear integration boundaries.
 ---
 
 # API Design Skill

@@ -256,8 +256,8 @@ public class UserRepository
     
     public async Task<User> RetrieveByIdAsync(int id)
     {
-        var users = await _commander.QueryAsync<User>(new { id });
-        return users.FirstOrDefault();
+        var result = await _commander.QueryAsync<User>(new { id });
+        return result.FirstOrDefault();
     }
 }
 ```

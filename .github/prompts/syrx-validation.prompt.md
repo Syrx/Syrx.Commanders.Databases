@@ -39,8 +39,8 @@ public async Task<User?> RetrieveByEmailAsync(string email, CancellationToken ca
     // This exception to be handled by the caller for better orchestration
     Throw<ArgumentException>(!string.IsNullOrWhiteSpace(email), nameof(email));
     
-    var users = await _commander.QueryAsync<User>(new { email }, cancellationToken);
-    return users.FirstOrDefault();
+    var result = await _commander.QueryAsync<User>(new { email }, cancellationToken);
+    return result.FirstOrDefault();
 }
 
 public async Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default)

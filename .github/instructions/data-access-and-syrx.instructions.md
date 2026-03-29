@@ -52,8 +52,8 @@ Use global `using static Syrx.Validation.Contract;` in project.
 public async Task<Order?> RetrieveAsync(Guid id, CancellationToken ct)
 {
 	Throw<ArgumentOutOfRangeException>(id != Guid.Empty, "Id required");
-    var data = await _commander.QueryAsync<OrderData>(CommandStrings.Order.RetrieveById, new { Id = id }, ct);
-	return data?.ToDomain();
+    var result = await _commander.QueryAsync<OrderData>(CommandStrings.Order.RetrieveById, new { Id = id }, ct);
+	return result?.ToDomain();
 }
 ```
 
