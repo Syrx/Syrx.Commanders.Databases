@@ -15,10 +15,10 @@ namespace Syrx.Commanders.Databases.Tests.Integration.Models
 
 
             public static IEnumerable<object[]> SingleTypeData => [
-                [new SingleType<ImmutableType>(new ImmutableType(1, "entry 1", 10, DateTime.Today), new { id  = 1 })],
-                [new SingleType<MutableType>(new MutableType { Id = 1, Name = "entry 1", Value = 10, Modified = DateTime.Today }, new { id = 1 })],
-                [new SingleType<RecordType>(new RecordType(2, "entry 2", 20, DateTime.Today), new { id = 2 })],
-                [new SingleType<PrimaryConstructorImmutableType>(new PrimaryConstructorImmutableType(3, "entry 3", 30, DateTime.Today), new { id = 3 })]
+                [new SingleType<ImmutableType>(new ImmutableType(1, "entry 1", 10, DateTime.UtcNow.Date), new { id  = 1 })],
+                [new SingleType<MutableType>(new MutableType { Id = 1, Name = "entry 1", Value = 10, Modified = DateTime.UtcNow.Date }, new { id = 1 })],
+                [new SingleType<RecordType>(new RecordType(2, "entry 2", 20, DateTime.UtcNow.Date), new { id = 2 })],
+                [new SingleType<PrimaryConstructorImmutableType>(new PrimaryConstructorImmutableType(3, "entry 3", 30, DateTime.UtcNow.Date), new { id = 3 })]
                ];            
             public static IEnumerable<object[]> TwoTypeData => [
                 [new TwoType<ImmutableType, ImmutableType, ImmutableTwoType<ImmutableType, ImmutableType, ImmutableType>>(
@@ -281,10 +281,10 @@ namespace Syrx.Commanders.Databases.Tests.Integration.Models
         public class Multiple
         {
             public static IEnumerable<object[]> SingleTypeData => [
-                [new SingleType<ImmutableType>(new ImmutableType(1, "entry 1", 10, DateTime.Today), new { id = 1 })],
-                [new SingleType<MutableType>(new MutableType { Id = 1, Name = "entry 1", Value = 10, Modified = DateTime.Today }, new { id = 1 })],
-                [new SingleType<RecordType>(new RecordType(2, "entry 2", 20, DateTime.Today), new { id = 2 })],
-                [new SingleType<PrimaryConstructorImmutableType>(new PrimaryConstructorImmutableType(3, "entry 3", 30, DateTime.Today), new { id = 3})]
+                [new SingleType<ImmutableType>(new ImmutableType(1, "entry 1", 10, DateTime.UtcNow.Date), new { id = 1 })],
+                [new SingleType<MutableType>(new MutableType { Id = 1, Name = "entry 1", Value = 10, Modified = DateTime.UtcNow.Date }, new { id = 1 })],
+                [new SingleType<RecordType>(new RecordType(2, "entry 2", 20, DateTime.UtcNow.Date), new { id = 2 })],
+                [new SingleType<PrimaryConstructorImmutableType>(new PrimaryConstructorImmutableType(3, "entry 3", 30, DateTime.UtcNow.Date), new { id = 3})]
                ];
             public static IEnumerable<object[]> OneType => [
                 [new OneType<IEnumerable<ImmutableType>,
@@ -292,7 +292,7 @@ namespace Syrx.Commanders.Databases.Tests.Integration.Models
                         IEnumerable<ImmutableType>,
                         IEnumerable<ImmutableType>>>>(
                     [
-                        new ImmutableType(1, "entry 1", 10, DateTime.Today)
+                        new ImmutableType(1, "entry 1", 10, DateTime.UtcNow.Date)
                     ],
                     (a) =>
                         [
@@ -305,7 +305,7 @@ namespace Syrx.Commanders.Databases.Tests.Integration.Models
                         IEnumerable<ImmutableType>,
                         IEnumerable<ImmutableType>>>>(One:
                     [
-                        new ImmutableType(1, "entry 1", 10, DateTime.Today)
+                        new ImmutableType(1, "entry 1", 10, DateTime.UtcNow.Date)
                     ],Map:
                     (a) =>
                         [

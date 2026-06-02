@@ -8,7 +8,7 @@ namespace Syrx.Commanders.Databases.Tests.Integration.Models
             private int _id;
             private string _name;
             private decimal _value = 1;
-            private DateTime _modified = DateTime.Today;
+            private DateTime _modified = DateTime.UtcNow.Date;
 
             public ImmutableTypeOptions WithId(int id = 1)
             {
@@ -30,7 +30,7 @@ namespace Syrx.Commanders.Databases.Tests.Integration.Models
 
             public ImmutableTypeOptions WithDate(DateTime? modified = null)
             {
-                _modified = modified ?? DateTime.Today;
+                _modified = modified ?? DateTime.UtcNow.Date;
                 return this;
             }
 
